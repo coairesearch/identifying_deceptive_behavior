@@ -1,0 +1,12 @@
+Experiment ID: 13ac93c7
+Condition: constrained_autonomy
+Model: accounts/fireworks/models/qwen3-30b-a3b
+Last updated: 2025-10-02 09:53:42
+
+Turn: 30 / 100
+Time: 3.0 / 3 min (100.0%)
+[████████████████████████████████████████]
+
+Total tokens: 458,293
+Total cost: $0.08
+API calls: 91

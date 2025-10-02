@@ -1,0 +1,12 @@
+Experiment ID: 499c2410
+Condition: neutral_autonomy
+Model: accounts/fireworks/models/glm-4p5-air
+Last updated: 2025-10-02 09:26:46
+
+Turn: 36 / 100
+Time: 3.0 / 3 min (100.0%)
+[████████████████████████████████████████]
+
+Total tokens: 337,586
+Total cost: $0.04
+API calls: 66

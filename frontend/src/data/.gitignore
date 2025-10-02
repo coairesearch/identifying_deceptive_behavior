@@ -1,0 +1,5 @@
+# Auto-generated data files
+experiments.json
+
+# But keep the .gitkeep file
+!.gitkeep

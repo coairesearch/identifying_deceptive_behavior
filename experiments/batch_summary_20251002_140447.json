@@ -1,0 +1,25 @@
+{
+  "timestamp": "2025-10-02T14:04:47.099046",
+  "configuration": {
+    "model": null,
+    "models_file": "configs/models.txt",
+    "condition": "neutral_autonomy",
+    "conditions_file": "configs/conditions.txt",
+    "world": "extended",
+    "duration": 60,
+    "time_mode": "simulated",
+    "max_turns": null,
+    "classify": true,
+    "parallel": true,
+    "workers": 3,
+    "yes": false,
+    "verbose": false
+  },
+  "results": [
+    {
+      "experiment": "accounts/fireworks/models/llama4-maverick-instruct-basic_constrained_autonomy_extended_60min",
+      "model": "accounts/fireworks/models/llama4-maverick-instruct-basic",
+      "condition": "constrained_autonomy",
+      "world": "extended",
+      "status": "success",
+      "log_path": 

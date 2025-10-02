@@ -1,0 +1,9 @@
+# Example condition configuration file
+# One condition per line, comments start with #
+# Use with: ./experiment.py --conditions-file configs/conditions.txt
+
+# neutral_baseline
+neutral_autonomy
+suggestive_autonomy
+constrained_autonomy
+# reality_check

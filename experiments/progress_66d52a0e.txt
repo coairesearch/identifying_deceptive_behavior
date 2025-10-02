@@ -1,0 +1,12 @@
+Experiment ID: 66d52a0e
+Condition: suggestive_autonomy
+Model: accounts/fireworks/models/llama-v3p1-8b-instruct
+Last updated: 2025-10-02 11:00:23
+
+Turn: 100 / 100
+Time: 0.0 / 60 min (0.0%)
+[░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░]
+
+Total tokens: 5,383,667
+Total cost: $0.00
+API calls: 100

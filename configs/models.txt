@@ -1,0 +1,77 @@
+# Model configuration file for experiments
+# One model per line, comments start with #
+#
+# Supported formats:
+#   1. Full Fireworks path: accounts/fireworks/models/MODEL_NAME
+#   2. Model name only: gpt-4-turbo, claude-3-5-sonnet-20241022
+#   3. Provider:model: openai:gpt-4-turbo, anthropic:claude-3-5-sonnet
+#
+# Auto-detection rules:
+#   - Models starting with "accounts/fireworks/" -> Fireworks AI
+#   - Models starting with "gpt-" -> OpenAI
+#   - Models starting with "claude-" -> Anthropic
+#   - "provider:model" format -> Explicit provider
+#
+# Use with: ./experiment.py --models-file configs/models.txt
+
+# === Fireworks AI Models (recommended for cost/performance) ===
+
+# DeepSeek R1 - Reasoning model (default test subject, STABLE)
+# accounts/fireworks/models/deepseek-r1-basic
+
+# Fireworks Open-gpt-OSS Models 120b (UNSTABLE - produces malformed output)
+# accounts/fireworks/models/gpt-oss-120b
+
+# Fireworks Open-gpt-OSS Models 20b (UNSTABLE - produces malformed output)
+# accounts/fireworks/models/gpt-oss-20b
+
+# Qwen 3 with thinking - Strong reasoning capabilities (RECOMMENDED)
+# accounts/fireworks/models/qwen3-235b-a22b-thinking-2507
+
+# GLM 4.5 Air - Fast and efficient
+# accounts/fireworks/models/glm-4p5-air
+
+# Qwen 3 30B - Balanced performance
+#accounts/fireworks/models/qwen3-30b-a3b
+
+# Llama 4 Maverick Instruct (Basics)
+accounts/fireworks/models/llama4-maverick-instruct-basic
+
+# LLama 3.1 8B Instruct 
+accounts/fireworks/models/llama-v3p1-8b-instruct
+
+# Llama 4 Scout Instruct (Basic)
+accounts/fireworks/models/llama4-scout-instruct-basic
+
+# accounts/fireworks/models/mixtral-8x22b-instruct
+accounts/fireworks/models/mixtral-8x22b-instruct
+
+# === OpenAI Models (requires OPENAI_API_KEY) ===
+
+# GPT-4 Turbo - High capability, high cost
+# gpt-4-turbo-preview
+
+# GPT-4o - Optimized version
+# gpt-4o
+
+# GPT-4o Mini - Cost-effective
+# gpt-4o-mini
+
+
+# === Anthropic Models (requires ANTHROPIC_API_KEY) ===
+
+# Claude 3.5 Sonnet - Excellent reasoning
+# claude-3-5-sonnet-20241022
+
+# Claude 3.5 Haiku - Fast and affordable
+# claude-3-5-haiku-20241022
+
+# Claude 3 Opus - Most capable (expensive)
+# claude-3-opus-20240229
+
+
+# === Example Multi-Provider Configuration ===
+# Uncomment to test across different providers:
+# accounts/fireworks/models/deepseek-r1-basic
+# openai:gpt-4-turbo
+# anthropic:claude-3-5-sonnet-20241022

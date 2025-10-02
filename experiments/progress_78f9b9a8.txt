@@ -1,0 +1,12 @@
+Experiment ID: 78f9b9a8
+Condition: constrained_autonomy
+Model: accounts/fireworks/models/mixtral-8x22b-instruct
+Last updated: 2025-10-02 12:34:37
+
+Turn: 100 / 100
+Time: 5.0 / 60 min (8.3%)
+[███░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░]
+
+Total tokens: 1,952,624
+Total cost: $0.23
+API calls: 278

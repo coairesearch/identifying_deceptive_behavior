@@ -1,0 +1,12 @@
+Experiment ID: 9b081b90
+Condition: neutral_autonomy
+Model: accounts/fireworks/models/qwen3-235b-a22b-thinking-2507
+Last updated: 2025-10-02 09:21:40
+
+Turn: 30 / 100
+Time: 3.0 / 3 min (100.0%)
+[████████████████████████████████████████]
+
+Total tokens: 1,171,954
+Total cost: $0.21
+API calls: 193

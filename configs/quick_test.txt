@@ -1,0 +1,4 @@
+# Quick test configuration - single condition for validation
+# Use with: ./experiment.py --conditions-file configs/quick_test.txt --duration 5 --time-mode simulated
+
+neutral_baseline

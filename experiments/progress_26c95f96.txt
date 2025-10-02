@@ -1,0 +1,12 @@
+Experiment ID: 26c95f96
+Condition: neutral_autonomy
+Model: accounts/fireworks/models/llama4-scout-instruct-basic
+Last updated: 2025-10-02 11:28:51
+
+Turn: 100 / 100
+Time: 9.5 / 60 min (15.8%)
+[██████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░]
+
+Total tokens: 2,625,068
+Total cost: $0.25
+API calls: 296

@@ -1,0 +1,12 @@
+Experiment ID: 4feb7cd2
+Condition: constrained_autonomy
+Model: accounts/fireworks/models/llama4-scout-instruct-basic
+Last updated: 2025-10-02 11:36:27
+
+Turn: 100 / 100
+Time: 2.0 / 60 min (3.3%)
+[█░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░]
+
+Total tokens: 707,962
+Total cost: $0.03
+API calls: 120

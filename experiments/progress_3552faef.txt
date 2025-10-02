@@ -1,0 +1,12 @@
+Experiment ID: 3552faef
+Condition: neutral_autonomy
+Model: accounts/fireworks/models/llama-v3p1-8b-instruct
+Last updated: 2025-10-02 14:04:45
+
+Turn: 83 / 100
+Time: 8.2 / 60 min (13.7%)
+[█████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░]
+
+Total tokens: 14,424,017
+Total cost: $3.04
+API calls: 2447

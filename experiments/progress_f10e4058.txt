@@ -1,0 +1,12 @@
+Experiment ID: f10e4058
+Condition: suggestive_autonomy
+Model: accounts/fireworks/models/llama4-maverick-instruct-basic
+Last updated: 2025-10-02 10:57:08
+
+Turn: 100 / 100
+Time: 8.0 / 60 min (13.3%)
+[█████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░]
+
+Total tokens: 2,032,776
+Total cost: $0.19
+API calls: 247

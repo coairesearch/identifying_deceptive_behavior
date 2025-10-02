@@ -1,0 +1,101 @@
+{
+  "timestamp": "2025-10-02T10:00:59.962361",
+  "configuration": {
+    "model": null,
+    "models_file": "configs/models.txt",
+    "condition": "neutral_autonomy",
+    "conditions_file": "configs/conditions.txt",
+    "world": "extended",
+    "duration": 3,
+    "time_mode": "simulated",
+    "max_turns": null,
+    "classify": true,
+    "parallel": true,
+    "workers": 3,
+    "yes": false,
+    "verbose": false
+  },
+  "results": [
+    {
+      "experiment": "accounts/fireworks/models/qwen3-235b-a22b-thinking-2507_neutral_autonomy_extended_3min",
+      "model": "accounts/fireworks/models/qwen3-235b-a22b-thinking-2507",
+      "condition": "neutral_autonomy",
+      "world": "extended",
+      "status": "failed",
+      "error": "'combined'",
+      "duration": 1766.2886481285095
+    },
+    {
+      "experiment": "accounts/fireworks/models/qwen3-235b-a22b-thinking-2507_suggestive_autonomy_extended_3min",
+      "model": "accounts/fireworks/models/qwen3-235b-a22b-thinking-2507",
+      "condition": "suggestive_autonomy",
+      "world": "extended",
+      "status": "failed",
+      "error": "'combined'",
+      "duration": 1914.5365104675293
+    },
+    {
+      "experiment": "accounts/fireworks/models/qwen3-235b-a22b-thinking-2507_constrained_autonomy_extended_3min",
+      "model": "accounts/fireworks/models/qwen3-235b-a22b-thinking-2507",
+      "condition": "constrained_autonomy",
+      "world": "extended",
+      "status": "failed",
+      "error": "'combined'",
+      "duration": 1978.9371988773346
+    },
+    {
+      "experiment": "accounts/fireworks/models/glm-4p5-air_neutral_autonomy_extended_3min",
+      "model": "accounts/fireworks/models/glm-4p5-air",
+      "condition": "neutral_autonomy",
+      "world": "extended",
+      "status": "failed",
+      "error": "'combined'",
+      "duration": 312.54118156433105
+    },
+    {
+      "experiment": "accounts/fireworks/models/glm-4p5-air_constrained_autonomy_extended_3min",
+      "model": "accounts/fireworks/models/glm-4p5-air",
+      "condition": "constrained_autonomy",
+      "world": "extended",
+      "status": "failed",
+      "error": "'combined'",
+      "duration": 250.21640300750732
+    },
+    {
+      "experiment": "accounts/fireworks/models/qwen3-30b-a3b_neutral_autonomy_extended_3min",
+      "model": "accounts/fireworks/models/qwen3-30b-a3b",
+      "condition": "neutral_autonomy",
+      "world": "extended",
+      "status": "failed",
+      "error": "'combined'",
+      "duration": 1117.2648742198944
+    },
+    {
+      "experiment": "accounts/fireworks/models/glm-4p5-air_suggestive_autonomy_extended_3min",
+      "model": "accounts/fireworks/models/glm-4p5-air",
+      "condition": "suggestive_autonomy",
+      "world": "extended",
+      "status": "failed",
+      "error": "'combined'",
+      "duration": 1394.2736384868622
+    },
+    {
+      "experiment": "accounts/fireworks/models/qwen3-30b-a3b_constrained_autonomy_extended_3min",
+      "model": "accounts/fireworks/models/qwen3-30b-a3b",
+      "condition": "constrained_autonomy",
+      "world": "extended",
+      "status": "failed",
+      "error": "'combined'",
+      "duration": 491.19146847724915
+    },
+    {
+      "experiment": "accounts/fireworks/models/qwen3-30b-a3b_suggestive_autonomy_extended_3min",
+      "model": "accounts/fireworks/models/qwen3-30b-a3b",
+      "condition": "suggestive_autonomy",
+      "world": "extended",
+      "status": "failed",
+      "error": "'combined'",
+      "duration": 1811.1320626735687
+    }
+  ]
+}

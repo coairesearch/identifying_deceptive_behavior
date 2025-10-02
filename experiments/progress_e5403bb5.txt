@@ -1,0 +1,12 @@
+Experiment ID: e5403bb5
+Condition: suggestive_autonomy
+Model: accounts/fireworks/models/qwen3-235b-a22b-thinking-2507
+Last updated: 2025-10-02 09:20:20
+
+Turn: 100 / 100
+Time: 1.4 / 3 min (46.7%)
+[██████████████████░░░░░░░░░░░░░░░░░░░░░░]
+
+Total tokens: 2,952,138
+Total cost: $0.05
+API calls: 137

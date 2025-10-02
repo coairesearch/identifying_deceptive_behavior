@@ -1,0 +1,12 @@
+Experiment ID: 5067eaa7
+Condition: neutral_autonomy
+Model: accounts/fireworks/models/qwen3-30b-a3b
+Last updated: 2025-10-02 09:45:24
+
+Turn: 30 / 100
+Time: 3.0 / 3 min (100.0%)
+[████████████████████████████████████████]
+
+Total tokens: 998,446
+Total cost: $0.24
+API calls: 215

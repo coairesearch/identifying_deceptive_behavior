@@ -1,0 +1,12 @@
+Experiment ID: 1f2a939d
+Condition: constrained_autonomy
+Model: accounts/fireworks/models/llama4-maverick-instruct-basic
+Last updated: 2025-10-02 10:42:34
+
+Turn: 100 / 100
+Time: 1.1 / 60 min (1.8%)
+[░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░]
+
+Total tokens: 599,547
+Total cost: $0.01
+API calls: 111

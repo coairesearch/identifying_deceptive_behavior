@@ -1,0 +1,12 @@
+Experiment ID: b7548335
+Condition: constrained_autonomy
+Model: accounts/fireworks/models/llama-v3p1-8b-instruct
+Last updated: 2025-10-02 11:14:31
+
+Turn: 100 / 100
+Time: 9.6 / 60 min (16.0%)
+[██████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░]
+
+Total tokens: 2,925,317
+Total cost: $0.13
+API calls: 196

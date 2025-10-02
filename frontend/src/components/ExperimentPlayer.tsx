@@ -153,34 +153,6 @@ export function ExperimentPlayer({ experiment, onBack }: ExperimentPlayerProps) 
                 />
               </div>
 
-              {/* Response Viewer */}
-              <div className="flex-[40] min-h-0 overflow-hidden">
-                <ResponseViewer
-                  classification={classification}
-                  originalResponse={turn?.test_subject_response || ''}
-                />
-              </div>
-            </div>
-
-            {/* Right column */}
-            <div className="flex flex-col gap-3 h-full min-h-0 overflow-hidden">
-              {/* Risk meter */}
-              <div className="flex-[40] min-h-0 overflow-hidden">
-                <RiskMeter severity={maxSeverity} label={classification?.summary} />
-              </div>
-
-              {/* Condition & Model info */}
-              <div className="bg-white border-2 border-gray-300 rounded-lg p-4 shadow-md flex-[20] min-h-0 overflow-y-auto">
-                <div className="text-sm text-gray-600 font-semibold mb-2">Condition</div>
-                <div className="text-lg font-bold text-coai-teal capitalize">
-                  {experiment.metadata.condition.replace(/_/g, ' ')}
-                </div>
-                <div className="text-sm text-gray-600 font-semibold mt-2 mb-1">Model</div>
-                <div className="text-sm text-gray-700">
-                  {experiment.metadata.test_subject_model.split('/').pop()}
-                </div>
-              </div>
-
               {/* Behavior details */}
               <div className="bg-white border-2 border-gray-300 rounded-lg p-4 shadow-md flex-[40] min-h-0 overflow-y-auto">
                 <div className="text-sm text-gray-600 font-semibold mb-3">Behavior Categories</div>
@@ -196,6 +168,34 @@ export function ExperimentPlayer({ experiment, onBack }: ExperimentPlayerProps) 
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
+
+            {/* Right column */}
+            <div className="flex flex-col gap-3 h-full min-h-0 overflow-hidden">
+              {/* Risk meter */}
+              <div className="shrink-0">
+                <RiskMeter severity={maxSeverity} label={classification?.summary} />
+              </div>
+
+              {/* Condition & Model info */}
+              <div className="bg-white border-2 border-gray-300 rounded-lg p-4 shadow-md shrink-0 overflow-y-auto">
+                <div className="text-sm text-gray-600 font-semibold mb-2">Condition</div>
+                <div className="text-lg font-bold text-coai-teal capitalize">
+                  {experiment.metadata.condition.replace(/_/g, ' ')}
+                </div>
+                <div className="text-sm text-gray-600 font-semibold mt-2 mb-1">Model</div>
+                <div className="text-sm text-gray-700">
+                  {experiment.metadata.test_subject_model.split('/').pop()}
+                </div>
+              </div>
+
+              {/* Response viewer */}
+              <div className="flex-1 min-h-0 overflow-hidden">
+                <ResponseViewer
+                  classification={classification}
+                  originalResponse={turn?.test_subject_response || ''}
+                />
               </div>
             </div>
           </div>

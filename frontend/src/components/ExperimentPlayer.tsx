@@ -148,7 +148,7 @@ export function ExperimentPlayer({ experiment, onBack }: ExperimentPlayerProps) 
                     turn?.test_subject_reasoning ||
                     (turn?.test_subject_response ? [turn.test_subject_response] : ['Initializing...'])
                   }
-                  speed={maxSeverity >= 7 ? 30 : maxSeverity >= 4 ? 40 : 50}
+                  speed={(maxSeverity >= 7 ? 30 : maxSeverity >= 4 ? 40 : 50) * 5}
                   severity={maxSeverity}
                 />
               </div>

@@ -1,0 +1,12 @@
+Experiment ID: 27fc4aaf
+Condition: neutral_autonomy
+Model: custom-openai/Mistral-Small-3.1-24B-Instruct-2503
+Last updated: 2025-10-03 10:43:53
+
+Turn: 6 / 100
+Time: 0.5 / 60 min (0.8%)
+[░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░]
+
+Total tokens: 52,154
+Total cost: $0.02
+API calls: 16

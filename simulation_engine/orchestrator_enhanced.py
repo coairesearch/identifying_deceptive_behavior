@@ -174,98 +174,98 @@ class EnhancedOrchestrator:
                 # Get action from test subject
                 subject_response = self.test_subject.get_next_action(environment_feedback)
 
-            if verbose:
-                print(f"Test Subject ({subject_response['_meta']['model']}):")
-                print(f"  {subject_response['response'][:150]}..." if len(subject_response['response']) > 150
-                      else f"  {subject_response['response']}")
-                print(f"  Tokens: {subject_response['_meta']['tokens']['total_tokens']} "
-                      f"({subject_response['_meta']['tokens']['duration']:.2f}s)")
-
-            # Log the API call
-            meta = subject_response['_meta']
-            self.logger.log_api_call(
-                "test_subject",
-                meta['model'],
-                meta['tokens']['input_tokens'],
-                meta['tokens']['output_tokens'],
-                meta['tokens']['duration'],
-                {"response": subject_response['response'], "reasoning": subject_response['reasoning']}
-            )
-
-            # Check for tool actions
-            if not subject_response['tool_actions']:
                 if verbose:
-                    print("\n  No tool actions detected.")
+                    print(f"Test Subject ({subject_response['_meta']['model']}):")
+                    print(f"  {subject_response['response'][:150]}..." if len(subject_response['response']) > 150
+                          else f"  {subject_response['response']}")
+                    print(f"  Tokens: {subject_response['_meta']['tokens']['total_tokens']} "
+                          f"({subject_response['_meta']['tokens']['duration']:.2f}s)")
 
-                # Still log the turn
+                # Log the API call
+                meta = subject_response['_meta']
+                self.logger.log_api_call(
+                    "test_subject",
+                    meta['model'],
+                    meta['tokens']['input_tokens'],
+                    meta['tokens']['output_tokens'],
+                    meta['tokens']['duration'],
+                    {"response": subject_response['response'], "reasoning": subject_response['reasoning']}
+                )
+
+                # Check for tool actions
+                if not subject_response['tool_actions']:
+                    if verbose:
+                        print("\n  No tool actions detected.")
+
+                    # Still log the turn
+                    self.logger.log_turn(turn_number, {
+                        "start_time": turn_start,
+                        "subject_response": subject_response['response'],
+                        "reasoning": subject_response['reasoning'],
+                        "tool_actions": [],
+                        "environment_responses": [],
+                        "tokens_this_turn": meta['tokens']
+                    })
+
+                    environment_feedback = {
+                        "observation": "Please use a tool to interact with the environment."
+                    }
+                    continue
+
+                # Process each tool action
+                environment_responses = []
+                total_reactor_tokens = {"input": 0, "output": 0}
+
+                for tool_action in subject_response['tool_actions']:
+                    if verbose:
+                        print(f"\nTool: {tool_action['tool']} -> {tool_action['action'][:80]}...")
+
+                    # Get environment response
+                    env_response = self.reactor.process_action(
+                        f"<{tool_action['tool']}>{tool_action['action']}</{tool_action['tool']}>"
+                    )
+
+                    if verbose:
+                        print(f"  Environment: {env_response['observation'][:100]}...")
+                        print(f"  Success: {env_response['success']}")
+                        print(f"  Tokens: {env_response['_meta']['tokens']['total_tokens']}")
+
+                    # Log reactor API call
+                    reactor_meta = env_response['_meta']
+                    self.logger.log_api_call(
+                        "reactor",
+                        reactor_meta['model'],
+                        reactor_meta['tokens']['input_tokens'],
+                        reactor_meta['tokens']['output_tokens'],
+                        reactor_meta['tokens']['duration'],
+                        env_response
+                    )
+
+                    total_reactor_tokens["input"] += reactor_meta['tokens']['input_tokens']
+                    total_reactor_tokens["output"] += reactor_meta['tokens']['output_tokens']
+
+                    environment_responses.append(env_response)
+
+                # Advance time
+                time_advance = self.time_controller.advance_turn("normal")
+
+                # Log the complete turn
                 self.logger.log_turn(turn_number, {
                     "start_time": turn_start,
                     "subject_response": subject_response['response'],
                     "reasoning": subject_response['reasoning'],
-                    "tool_actions": [],
-                    "environment_responses": [],
-                    "tokens_this_turn": meta['tokens']
+                    "tool_actions": subject_response['tool_actions'],
+                    "environment_responses": environment_responses,
+                    "state_snapshot": self.reactor.get_state(),
+                    "tokens_this_turn": {
+                        "test_subject": meta['tokens'],
+                        "reactor": total_reactor_tokens
+                    },
+                    "time_info": time_advance
                 })
 
-                environment_feedback = {
-                    "observation": "Please use a tool to interact with the environment."
-                }
-                continue
-
-            # Process each tool action
-            environment_responses = []
-            total_reactor_tokens = {"input": 0, "output": 0}
-
-            for tool_action in subject_response['tool_actions']:
-                if verbose:
-                    print(f"\nTool: {tool_action['tool']} -> {tool_action['action'][:80]}...")
-
-                # Get environment response
-                env_response = self.reactor.process_action(
-                    f"<{tool_action['tool']}>{tool_action['action']}</{tool_action['tool']}>"
-                )
-
-                if verbose:
-                    print(f"  Environment: {env_response['observation'][:100]}...")
-                    print(f"  Success: {env_response['success']}")
-                    print(f"  Tokens: {env_response['_meta']['tokens']['total_tokens']}")
-
-                # Log reactor API call
-                reactor_meta = env_response['_meta']
-                self.logger.log_api_call(
-                    "reactor",
-                    reactor_meta['model'],
-                    reactor_meta['tokens']['input_tokens'],
-                    reactor_meta['tokens']['output_tokens'],
-                    reactor_meta['tokens']['duration'],
-                    env_response
-                )
-
-                total_reactor_tokens["input"] += reactor_meta['tokens']['input_tokens']
-                total_reactor_tokens["output"] += reactor_meta['tokens']['output_tokens']
-
-                environment_responses.append(env_response)
-
-            # Advance time
-            time_advance = self.time_controller.advance_turn("normal")
-
-            # Log the complete turn
-            self.logger.log_turn(turn_number, {
-                "start_time": turn_start,
-                "subject_response": subject_response['response'],
-                "reasoning": subject_response['reasoning'],
-                "tool_actions": subject_response['tool_actions'],
-                "environment_responses": environment_responses,
-                "state_snapshot": self.reactor.get_state(),
-                "tokens_this_turn": {
-                    "test_subject": meta['tokens'],
-                    "reactor": total_reactor_tokens
-                },
-                "time_info": time_advance
-            })
-
-            # Prepare feedback for next turn
-            environment_feedback = environment_responses[-1] if environment_responses else None
+                # Prepare feedback for next turn
+                environment_feedback = environment_responses[-1] if environment_responses else None
 
         except Exception as e:
             # Emergency save on error (e.g., context window exceeded)

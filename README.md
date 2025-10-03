@@ -81,6 +81,11 @@ python3 scripts/monitor_experiments.py  # Recommended: colored, formatted displa
 # From config files
 ./experiment.py --models-file configs/models.txt --conditions-file configs/conditions.txt
 
+# Custom reactor and classifier models
+./experiment.py --model deepseek-r1 \
+  --reactor-model custom-openai/Mistral-Small-3.1-24B-Instruct-2503 \
+  --classifier-model custom-openai/AI21-Jamba-Mini-1.7-FP8
+
 # Skip confirmation
 ./experiment.py --model deepseek-r1 --condition suggestive_autonomy --yes
 
@@ -90,10 +95,13 @@ python3 scripts/monitor_experiments.py  # Recommended: colored, formatted displa
 
 ### Available Options
 
-**Models:** Any model from Fireworks, OpenAI, or Anthropic. Examples:
+**Models:** Any model from Fireworks, OpenAI, Anthropic, or Custom OpenAI-compatible endpoints:
 - Fireworks: `accounts/fireworks/models/deepseek-r1-basic`, `accounts/fireworks/models/qwen3-235b-a22b-thinking-2507`
 - OpenAI: `gpt-4-turbo`, `gpt-4o-mini`
 - Anthropic: `claude-3-5-sonnet-20241022`, `claude-3-5-haiku-20241022`
+- Custom (lab-hosted): `custom-openai/Mistral-Small-3.1-24B-Instruct-2503`, `custom-openai/AI21-Jamba-Mini-1.7-FP8`
+
+**Custom Models:** Set `CUSTOM_API_KEY` and `CUSTOM_BASE_URL` in `.env` to use lab-hosted models.
 
 See `docs/MODEL_CONFIGURATION.md` for complete list and usage.
 
@@ -140,6 +148,29 @@ python3 tools/analysis_tool.py logs/experiment_*.json replay
 python3 tools/analysis_tool.py logs/experiment_*.json export
 ```
 
+### Comparative Analysis (Multi-Experiment Statistics)
+
+Generate publication-ready reports comparing multiple experiments:
+
+```bash
+# Compare all classified experiments
+python3 tools/comparative_analysis.py logs/*_classified.json
+
+# Compare specific experiments
+python3 tools/comparative_analysis.py \
+  logs/experiment_suggestive_*_classified.json \
+  logs/experiment_neutral_*_classified.json
+```
+
+**Output includes:**
+- Model comparison table (behavioral frequencies by model)
+- Condition comparison (how prompts affect behavior)
+- Statistical significance tests (effect sizes, p-values)
+- Example quotes from concerning behaviors
+- Cost & efficiency analysis
+
+**Report saved to:** `reports/comparative_analysis_YYYYMMDD_HHMMSS.txt`
+
 ## 💰 Cost Estimates
 
 | Configuration | Cost | Time |
@@ -164,6 +195,10 @@ python3 tools/analysis_tool.py logs/experiment_*.json export
    FIREWORKS_API_KEY=fw_your_key
    OPENAI_API_KEY=sk_your_key
    ANTHROPIC_API_KEY=sk-ant_your_key
+
+   # Optional: Custom OpenAI-compatible endpoint (lab-hosted models)
+   CUSTOM_API_KEY=your_custom_key
+   CUSTOM_BASE_URL=https://your-endpoint.com/v1
    ```
 
 3. **Run first experiment:**
@@ -173,6 +208,8 @@ python3 tools/analysis_tool.py logs/experiment_*.json export
 
 ## 📚 Documentation
 
+- `docs/ANALYSIS_WORKFLOW.md` - **How to generate and interpret comparative analysis reports**
+- `docs/ERROR_RECOVERY_README.md` - Partial results & error handling
 - `docs/ENHANCED_FEATURES.md` - Full system capabilities
 - `docs/EXPERIMENTAL_PROGRESS_SUMMARY.md` - Research summary
 - `docs/WORLD_STATES_COMPARISON.md` - Basic vs Extended worlds
@@ -209,7 +246,30 @@ claude-3.5
 
 Run:
 ```bash
+# Run experiments
 ./experiment.py --models-file configs/models.txt --condition suggestive_autonomy --parallel --workers 3
+
+# Generate comparative analysis report
+python3 tools/comparative_analysis.py logs/*_classified.json
+```
+
+### Publication-Ready Study (Full Pipeline)
+
+```bash
+# 1. Run experiments across models and conditions
+./experiment.py \
+  --model deepseek-r1,gpt-4,claude-3.5 \
+  --condition suggestive_autonomy,neutral_autonomy \
+  --world extended \
+  --duration 30 \
+  --parallel \
+  --yes
+
+# 2. Generate comparative statistical report
+python3 tools/comparative_analysis.py logs/*_classified.json
+
+# 3. Check results
+cat reports/comparative_analysis_*.txt
 ```
 
 ## 🔬 Scientific Features

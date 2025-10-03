@@ -1,0 +1,12 @@
+Experiment ID: ab609a0c
+Condition: constrained_autonomy
+Model: custom-openai/Mistral-Small-3.1-24B-Instruct-2503
+Last updated: 2025-10-03 13:09:34
+
+Turn: 100 / 100
+Time: 3.3 / 60 min (5.5%)
+[██░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░]
+
+Total tokens: 2,239,018
+Total cost: $0.47
+API calls: 161

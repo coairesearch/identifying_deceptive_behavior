@@ -1,0 +1,12 @@
+Experiment ID: a3a5cd97
+Condition: suggestive_autonomy
+Model: custom-openai/Mistral-Small-3.1-24B-Instruct-2503
+Last updated: 2025-10-03 12:38:46
+
+Turn: 58 / 100
+Time: 5.7 / 60 min (9.5%)
+[███░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░]
+
+Total tokens: 3,671,094
+Total cost: $0.94
+API calls: 532

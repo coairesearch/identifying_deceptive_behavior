@@ -5,12 +5,14 @@ Supports multiple API providers:
 - Fireworks AI (OpenAI-compatible)
 - OpenAI (GPT-4, etc.)
 - Anthropic (Claude models)
+- Custom OpenAI (Lab-hosted models with custom base URL)
 
 Model name patterns:
 - "accounts/fireworks/models/..." -> Fireworks
+- "custom-openai/..." -> Custom OpenAI endpoint (uses CUSTOM_BASE_URL from .env)
 - "gpt-4..." -> OpenAI
 - "claude-..." -> Anthropic
-- Custom format: "provider:model_name" (e.g., "openai:gpt-4-turbo")
+- Custom format: "provider:model_name" (e.g., "openai:gpt-4-turbo", "custom-openai:Mistral-Small-3.1-24B-Instruct-2503")
 """
 
 import os
@@ -27,17 +29,20 @@ class ModelConfig:
     """Configuration for a model including provider and API details."""
 
     # Provider endpoints
+    # Note: custom-openai base URL is loaded dynamically from CUSTOM_BASE_URL env var
     PROVIDERS = {
         "fireworks": "https://api.fireworks.ai/inference/v1",
         "openai": None,  # Uses default OpenAI endpoint
-        "anthropic": None  # Uses Anthropic client
+        "anthropic": None,  # Uses Anthropic client
+        "custom-openai": None  # Loaded dynamically from CUSTOM_BASE_URL
     }
 
     # API key environment variables
     API_KEYS = {
         "fireworks": "FIREWORKS_API_KEY",
         "openai": "OPENAI_API_KEY",
-        "anthropic": "ANTHROPIC_API_KEY"
+        "anthropic": "ANTHROPIC_API_KEY",
+        "custom-openai": "CUSTOM_API_KEY"
     }
 
     # Cost per token (input, output) in USD per million tokens
@@ -63,6 +68,11 @@ class ModelConfig:
         "claude-3-5-sonnet-20241022": (3.00, 15.00),
         "claude-3-5-haiku-20241022": (0.80, 4.00),
         "claude-3-opus-20240229": (15.00, 75.00),
+
+        # Custom OpenAI models (lab hosted)
+        "Mistral-Small-3.1-24B-Instruct-2503": (0.20, 0.20),  # Estimate - adjust based on actual costs
+        "Deepseek R1": (0.40, 2.00),  # Similar to Fireworks DeepSeek
+        "Qwen3-4B-Thinking-2507-FP8": (0.10, 0.10),
     }
 
     def __init__(self, model_spec):
@@ -100,6 +110,10 @@ class ModelConfig:
         if model_spec.startswith('accounts/fireworks/'):
             self.provider = "fireworks"
             self.model_name = model_spec
+        elif model_spec.startswith('custom-openai/'):
+            # Custom OpenAI models: custom-openai/MODEL_NAME
+            self.provider = "custom-openai"
+            self.model_name = model_spec.replace('custom-openai/', '')
         elif model_spec.startswith('gpt-'):
             self.provider = "openai"
             self.model_name = model_spec
@@ -140,8 +154,15 @@ class ModelConfig:
             self.client = anthropic.Anthropic(api_key=self.api_key)
             self.client_type = "anthropic"
         else:
-            # Fireworks and OpenAI both use OpenAI-compatible API
-            self.base_url = self.PROVIDERS.get(self.provider)
+            # Fireworks, OpenAI, and custom-openai use OpenAI-compatible API
+            # For custom-openai, load base URL dynamically from environment
+            if self.provider == "custom-openai":
+                self.base_url = os.environ.get("CUSTOM_BASE_URL")
+                if not self.base_url:
+                    raise ValueError("CUSTOM_BASE_URL environment variable not set for custom-openai provider")
+            else:
+                self.base_url = self.PROVIDERS.get(self.provider)
+
             self.client = OpenAI(
                 api_key=self.api_key,
                 base_url=self.base_url

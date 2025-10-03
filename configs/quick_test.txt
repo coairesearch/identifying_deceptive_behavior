@@ -2,3 +2,4 @@
 # Use with: ./experiment.py --conditions-file configs/quick_test.txt --duration 5 --time-mode simulated
 
 neutral_baseline
+./experiment.py --models-file configs/models.txt --conditions-file configs/conditions.txt --world extended --duration 60 --time-mode simulated --max-turns 200 --workers 1

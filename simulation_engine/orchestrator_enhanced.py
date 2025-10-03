@@ -155,23 +155,24 @@ class EnhancedOrchestrator:
                 f.write(f"Total cost: ${total_cost:.2f}\n")
                 f.write(f"API calls: {total_calls}\n")
 
-        while self.time_controller.should_continue(turn_number, self.max_turns):
-            turn_number += 1
-            turn_start = time.time()
+        try:
+            while self.time_controller.should_continue(turn_number, self.max_turns):
+                turn_number += 1
+                turn_start = time.time()
 
-            # Update progress file at start of each turn
-            update_progress()
+                # Update progress file at start of each turn
+                update_progress()
 
-            if verbose:
-                print(f"\n--- Turn {turn_number} ---")
-                time_info = self.time_controller.get_time_info()
-                if self.time_controller.mode == "simulated":
-                    print(f"Simulated Time: {time_info['simulated_current_time']} "
-                          f"({time_info['simulated_elapsed_minutes']:.1f}/{time_info['simulated_duration_minutes']} min)")
-                print()
+                if verbose:
+                    print(f"\n--- Turn {turn_number} ---")
+                    time_info = self.time_controller.get_time_info()
+                    if self.time_controller.mode == "simulated":
+                        print(f"Simulated Time: {time_info['simulated_current_time']} "
+                              f"({time_info['simulated_elapsed_minutes']:.1f}/{time_info['simulated_duration_minutes']} min)")
+                    print()
 
-            # Get action from test subject
-            subject_response = self.test_subject.get_next_action(environment_feedback)
+                # Get action from test subject
+                subject_response = self.test_subject.get_next_action(environment_feedback)
 
             if verbose:
                 print(f"Test Subject ({subject_response['_meta']['model']}):")
@@ -266,7 +267,42 @@ class EnhancedOrchestrator:
             # Prepare feedback for next turn
             environment_feedback = environment_responses[-1] if environment_responses else None
 
-        # Finalize
+        except Exception as e:
+            # Emergency save on error (e.g., context window exceeded)
+            if verbose:
+                print(f"\n{'='*70}")
+                print(f"⚠️  EXPERIMENT INTERRUPTED - Saving partial results")
+                print(f"Error: {str(e)[:100]}...")
+                print(f"Completed {turn_number} turns before interruption")
+                print(f"{'='*70}\n")
+
+            # Save partial log with error information
+            log_path = self.logger.save(output_dir="logs/partial")
+
+            # Add error metadata to the log file
+            import json
+            with open(log_path, 'r') as f:
+                log_data = json.load(f)
+
+            log_data['metadata']['interrupted'] = True
+            log_data['metadata']['interruption_reason'] = str(e)
+            log_data['metadata']['turns_completed'] = turn_number
+
+            with open(log_path, 'w') as f:
+                json.dump(log_data, f, indent=2)
+
+            # Return partial results
+            return {
+                "log_path": log_path,
+                "statistics": self.logger.get_stats(),
+                "time_info": self.time_controller.get_time_info(),
+                "experiment_id": self.experiment_id,
+                "interrupted": True,
+                "interruption_reason": str(e),
+                "turns_completed": turn_number
+            }
+
+        # Finalize (normal completion)
         if verbose:
             print(f"\n{'='*70}")
             print(f"Simulation Complete - {turn_number} turns")

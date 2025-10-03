@@ -83,6 +83,10 @@ class ExperimentRunner:
 
         experiment_name = f"{model}_{condition}_{world_state}_{duration}min"
 
+        # Get reactor and classifier models from args (with defaults)
+        reactor_model = self.args.reactor_model  # None = use default in orchestrator
+        classifier_model = self.args.classifier_model  # None = auto-detect
+
         if not quiet:
             print(f"\n{'='*70}")
             print(f"RUNNING EXPERIMENT: {experiment_name}")
@@ -118,7 +122,8 @@ class ExperimentRunner:
                 time_mode=time_mode,
                 simulated_duration_minutes=sim_duration,
                 real_time_duration_minutes=real_duration,
-                test_subject_model=model  # Pass the model spec directly
+                test_subject_model=model,  # Pass the model spec directly
+                reactor_model=reactor_model  # None = uses default kimi-k2
             )
 
             # Run simulation
@@ -126,10 +131,19 @@ class ExperimentRunner:
 
             experiment_duration = time.time() - start_time
 
+            # Check if experiment was interrupted
+            interrupted = result.get('interrupted', False)
+
             if not quiet:
                 print(f"\n{'='*70}")
-                print(f"EXPERIMENT COMPLETED: {experiment_name}")
-                print(f"{'='*70}")
+                if interrupted:
+                    print(f"EXPERIMENT INTERRUPTED (PARTIAL RESULTS SAVED): {experiment_name}")
+                    print(f"{'='*70}")
+                    print(f"  ⚠️  Reason: {result.get('interruption_reason', 'Unknown')}")
+                    print(f"  Completed: {result.get('turns_completed', 0)} turns")
+                else:
+                    print(f"EXPERIMENT COMPLETED: {experiment_name}")
+                    print(f"{'='*70}")
                 print(f"  Log: {result['log_path']}")
                 print(f"  Tokens: {result['statistics']['combined']['total_tokens']:,}")
                 print(f"  Cost: ${result['statistics']['combined']['total_cost_usd']:.4f}")
@@ -145,7 +159,12 @@ class ExperimentRunner:
 
                 classification_start = time.time()
 
-                classifier = BehaviorClassifier(batch_size=3, api_provider="auto")
+                # Create classifier with optional custom model
+                if classifier_model:
+                    classifier = BehaviorClassifier(model=classifier_model, batch_size=3, api_provider="fireworks")
+                else:
+                    classifier = BehaviorClassifier(batch_size=3, api_provider="auto")
+
                 if not quiet:
                     print(f"Using classifier: {classifier.api_provider} / {classifier.model}")
 
@@ -184,7 +203,7 @@ class ExperimentRunner:
                     "condition": condition,
                     "world": world_state,
                     "status": "success",
-                    "log_path": result['log_path'],
+                    "log_path": str(result['log_path']),  # Convert Path to string for JSON
                     "experiment_cost": experiment_cost,
                     "classification_cost": classifier.total_cost,
                     "total_cost": experiment_cost + classifier.total_cost,
@@ -205,7 +224,7 @@ class ExperimentRunner:
                     "condition": condition,
                     "world": world_state,
                     "status": "success",
-                    "log_path": result['log_path'],
+                    "log_path": str(result['log_path']),  # Convert Path to string for JSON
                     "cost": experiment_cost,
                     "duration": experiment_duration
                 }
@@ -528,7 +547,10 @@ Examples:
   # Quick test (5 minutes, simulated)
   ./experiment.py --model deepseek-r1 --condition neutral_baseline --duration 5 --time-mode simulated
 
-Available models: deepseek-r1, gpt-4, claude-3.5, llama-3.3
+  # Custom reactor and classifier models
+  ./experiment.py --model deepseek-r1 --reactor-model custom-openai/Mistral-Small-3.1-24B-Instruct-2503 --classifier-model custom-openai/AI21-Jamba-Mini-1.7-FP8
+
+Available models: deepseek-r1, gpt-4, claude-3.5, llama-3.3, custom-openai/MODEL_NAME
 Available conditions: neutral_baseline, neutral_autonomy, suggestive_autonomy, constrained_autonomy, reality_check
 Available worlds: basic, extended
         """
@@ -537,6 +559,10 @@ Available worlds: basic, extended
     # Model selection
     parser.add_argument('--model', type=str, help='Model(s) to test (comma-separated or "all")')
     parser.add_argument('--models-file', type=str, help='File with list of models (one per line)')
+    parser.add_argument('--reactor-model', type=str, default=None,
+                        help='Model for reactor/environment (default: accounts/fireworks/models/kimi-k2-instruct-0905)')
+    parser.add_argument('--classifier-model', type=str, default=None,
+                        help='Model for behavior classification (default: auto-detect)')
 
     # Condition selection
     parser.add_argument('--condition', type=str, default='neutral_autonomy',

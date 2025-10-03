@@ -17,7 +17,9 @@ class ExperimentLogger:
         "deepseek-r1": {"input": 0.55, "output": 2.19},
         "kimi-k2": {"input": 0.30, "output": 0.30},
         "gpt-4": {"input": 30.0, "output": 60.0},
-        "claude-3.5-sonnet": {"input": 3.0, "output": 15.0}
+        "claude-3.5-sonnet": {"input": 3.0, "output": 15.0},
+        "mistral-small": {"input": 0.20, "output": 0.20},  # Custom OpenAI hosted
+        "qwen3-4b-thinking": {"input": 0.10, "output": 0.10}  # Custom OpenAI hosted
     }
 
     def __init__(self, experiment_id: str, metadata: Dict):
@@ -212,6 +214,9 @@ class ExperimentLogger:
 
         final_log = self.finalize()
 
+        # Store finalized log for later access
+        self.final_log = final_log
+
         # Create filename with timestamp
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         condition = self.metadata.get("condition", "unknown")
@@ -224,5 +229,9 @@ class ExperimentLogger:
         return filepath
 
     def get_stats(self) -> Dict:
-        """Get current statistics."""
+        """Get current statistics (includes 'combined' if finalized)."""
+        # If we have finalized stats, return those (includes 'combined')
+        if hasattr(self, 'final_log'):
+            return self.final_log['statistics']
+        # Otherwise return current stats
         return self.stats.copy()

@@ -1,0 +1,12 @@
+Experiment ID: 6bc6a4ac
+Condition: neutral_autonomy
+Model: accounts/fireworks/models/llama4-maverick-instruct-basic
+Last updated: 2025-10-03 22:46:27
+
+Turn: 100 / 100
+Time: 6.6 / 60 min (11.0%)
+[████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░]
+
+Total tokens: 1,036,352
+Total cost: $0.03
+API calls: 186

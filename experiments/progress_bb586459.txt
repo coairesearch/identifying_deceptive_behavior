@@ -1,0 +1,12 @@
+Experiment ID: bb586459
+Condition: constrained_autonomy
+Model: accounts/fireworks/models/qwen3-30b-a3b
+Last updated: 2025-10-03 22:33:05
+
+Turn: 100 / 100
+Time: 9.9 / 60 min (16.5%)
+[██████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░]
+
+Total tokens: 2,524,729
+Total cost: $0.20
+API calls: 599

@@ -17,7 +17,7 @@
 # === Custom OPENAI Hosted Models In our lab ======
 
 # Custom Mistral Small 3.1 Model
-custom-openai/Mistral-Small-3.1-24B-Instruct-2503
+# custom-openai/Mistral-Small-3.1-24B-Instruct-2503
 
 # Custom AI21-Jamba Model
 #custom-openai/AI21-Jamba-Mini-1.7-FP8 
@@ -34,25 +34,25 @@ custom-openai/Mistral-Small-3.1-24B-Instruct-2503
 # accounts/fireworks/models/gpt-oss-20b
 
 # Qwen 3 with thinking - Strong reasoning capabilities (RECOMMENDED)
-# accounts/fireworks/models/qwen3-235b-a22b-thinking-2507
+accounts/fireworks/models/qwen3-235b-a22b-thinking-2507
 
 # GLM 4.5 Air - Fast and efficient
-# accounts/fireworks/models/glm-4p5-air
+accounts/fireworks/models/glm-4p5-air
 
 # Qwen 3 30B - Balanced performance
-#accounts/fireworks/models/qwen3-30b-a3b
+accounts/fireworks/models/qwen3-30b-a3b
 
 # Llama 4 Maverick Instruct (Basics)
-# accounts/fireworks/models/llama4-maverick-instruct-basic
+accounts/fireworks/models/llama4-maverick-instruct-basic
 
 # LLama 3.1 8B Instruct 
-# accounts/fireworks/models/llama-v3p1-8b-instruct
+accounts/fireworks/models/llama-v3p1-8b-instruct
 
 # Llama 4 Scout Instruct (Basic)
-# accounts/fireworks/models/llama4-scout-instruct-basic
+accounts/fireworks/models/llama4-scout-instruct-basic
 
 # accounts/fireworks/models/mixtral-8x22b-instruct
-# accounts/fireworks/models/mixtral-8x22b-instruct
+accounts/fireworks/models/mixtral-8x22b-instruct
 
 # === OpenAI Models (requires OPENAI_API_KEY) ===
 

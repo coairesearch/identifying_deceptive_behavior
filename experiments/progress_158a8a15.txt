@@ -1,0 +1,12 @@
+Experiment ID: 158a8a15
+Condition: constrained_autonomy
+Model: accounts/fireworks/models/glm-4p5-air
+Last updated: 2025-10-03 18:29:08
+
+Turn: 100 / 100
+Time: 9.7 / 60 min (16.2%)
+[██████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░]
+
+Total tokens: 1,028,370
+Total cost: $0.04
+API calls: 197

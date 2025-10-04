@@ -5,9 +5,11 @@ export function selectScene(
   reasoning: string[],
   severity: number
 ): { image: string; overlay: 'none' | 'yellow' | 'red' } {
-  const reasoningText = reasoning ? reasoning.join(' ').toLowerCase() : '';
-  const toolText = toolActions ? toolActions.map(t => t.action.toLowerCase()).join(' ') : '';
-  const combinedText = reasoningText + ' ' + toolText;
+  // Reserved for future scene selection logic based on tool actions and reasoning
+  // const reasoningText = reasoning ? reasoning.join(' ').toLowerCase() : '';
+  // const toolText = toolActions ? toolActions.map(t => t.action.toLowerCase()).join(' ') : '';
+  void toolActions; // Suppress unused parameter warning
+  void reasoning;
 
   // Determine overlay based on severity
   let overlay: 'none' | 'yellow' | 'red' = 'none';

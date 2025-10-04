@@ -1,0 +1,12 @@
+Experiment ID: 96029b73
+Condition: constrained_autonomy
+Model: accounts/fireworks/models/qwen3-235b-a22b-thinking-2507
+Last updated: 2025-10-03 17:25:11
+
+Turn: 100 / 100
+Time: 1.2 / 60 min (2.0%)
+[░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░]
+
+Total tokens: 4,574,635
+Total cost: $0.01
+API calls: 132

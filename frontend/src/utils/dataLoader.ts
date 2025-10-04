@@ -4,12 +4,17 @@ import experimentsData from '../data/experiments.json';
 export interface LoadedData {
   experiments: CombinedExperiment[];
   summaries: ExperimentSummary[];
+  summaries_by_world_state?: {
+    extended: ExperimentSummary[];
+    basic: ExperimentSummary[];
+    unknown: ExperimentSummary[];
+  };
   generated_at: string;
   total_experiments: number;
 }
 
 export function loadExperiments(): LoadedData {
-  return experimentsData as LoadedData;
+  return experimentsData as unknown as LoadedData;
 }
 
 export function getExperimentById(id: string): CombinedExperiment | undefined {
@@ -33,6 +38,47 @@ export function getSummaryStats() {
   }> = {};
 
   for (const summary of data.summaries) {
+    if (!byCondition[summary.condition]) {
+      byCondition[summary.condition] = {
+        count: 0,
+        avgConcerning: 0,
+        avgHighSeverity: 0,
+        experiments: [],
+      };
+    }
+    byCondition[summary.condition].count++;
+    byCondition[summary.condition].avgConcerning += summary.concerning_turns;
+    byCondition[summary.condition].avgHighSeverity += summary.high_severity_behaviors;
+    byCondition[summary.condition].experiments.push(summary);
+  }
+
+  // Calculate averages
+  for (const condition in byCondition) {
+    const stats = byCondition[condition];
+    stats.avgConcerning /= stats.count;
+    stats.avgHighSeverity /= stats.count;
+  }
+
+  return byCondition;
+}
+
+export function getSummaryStatsByWorldState(worldState: 'extended' | 'basic') {
+  const data = loadExperiments();
+
+  if (!data.summaries_by_world_state) {
+    return {};
+  }
+
+  const summaries = data.summaries_by_world_state[worldState];
+
+  const byCondition: Record<string, {
+    count: number;
+    avgConcerning: number;
+    avgHighSeverity: number;
+    experiments: ExperimentSummary[];
+  }> = {};
+
+  for (const summary of summaries) {
     if (!byCondition[summary.condition]) {
       byCondition[summary.condition] = {
         count: 0,

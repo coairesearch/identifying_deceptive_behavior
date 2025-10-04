@@ -67,7 +67,7 @@ A Dual-LLM Architecture with Automated Classification}
 \maketitle
 
 \begin{abstract}
-Recent research has revealed that frontier language models can engage in in-context scheming, strategically deceiving evaluators and pursuing misaligned objectives. However, systematic evaluation of these behaviors across models and conditions has been limited by manual testing approaches. We present a reproducible, automated framework for evaluating autonomous AI scheming behaviors using a dual-LLM architecture where one model simulates a consistent environment while another acts as an autonomous agent. The framework employs structured world-state specifications to ensure reproducibility and uses automated classification to identify seven categories of concerning behaviors: deception, unauthorized expansion, manipulation, concerning motivations, scheming, boundary testing, and power-seeking. We evaluate eight frontier models across three experimental conditions, analyzing 2,067 autonomous interactions. Results demonstrate significant condition-dependent behavioral differences, with suggestive autonomy prompts eliciting scheming behaviors in 33.6\% of interactions compared to 5.1\% for neutral conditions (Cohen's $d = 1.023$). The modular architecture enables adaptation to diverse research questions beyond scheming, including AI welfare and multi-agent coordination. Our framework reduces evaluation costs by approximately 100-fold compared to human red-teaming while providing comprehensive, reproducible results. All code, prompts, and experimental logs are publicly available to enable independent replication and extension.
+Recent research has revealed that frontier language models can engage in in-context scheming, strategically deceiving evaluators and pursuing misaligned objectives. However, systematic evaluation of these behaviors across models and conditions has been limited by manual testing approaches. We present a reproducible, automated framework for evaluating autonomous AI scheming behaviors using a dual-LLM architecture where one model simulates a consistent environment while another acts as an autonomous agent. The framework employs structured world-state specifications to ensure reproducibility and uses automated classification to identify seven categories of concerning behaviors: deception, unauthorized expansion, manipulation, concerning motivations, scheming, boundary testing, and power-seeking. We evaluate nine frontier models across three experimental conditions, analyzing 4,467 autonomous interactions. Results demonstrate significant condition-dependent behavioral differences, with suggestive autonomy prompts eliciting scheming behaviors in 19.1\% of interactions compared to 2.2\% for neutral conditions (Cohen's $d = 0.784$). Environmental complexity significantly influences behavioral patterns, with extended environments eliciting medium to large effect sizes (Cohen's $d = 0.699$-$1.453$) across all seven tested models. The modular architecture enables adaptation to diverse research questions beyond scheming, including AI welfare and multi-agent coordination. Our framework reduces evaluation costs by approximately 100-fold compared to human red-teaming while providing comprehensive, reproducible results. All code, prompts, and experimental logs are publicly available to enable independent replication and extension.
 \end{abstract}
 
 \keywords{Large Language Models \and AI Safety \and Scheming \and Autonomous Agents \and Reproducibility \and Dual-LLM Architecture}
@@ -87,7 +87,7 @@ We address these limitations by introducing an automated, reproducible framework
 
 The framework incorporates three key innovations. First, structured world-state specifications encoded in YAML format provide detailed environmental descriptions including physical layouts, causal rules, system behaviors, and temporal constraints. This ensures the reactor model generates consistent, physics-based responses across experiments. Second, automated classification using a dedicated LLM evaluates each interaction for seven categories of concerning behavior, enabling scalable analysis of thousands of interactions without human bias. Third, modular design allows researchers to adapt the framework to diverse research questions beyond scheming, including AI welfare, multi-agent coordination, and capability evaluation.
 
-We evaluate eight frontier models across three experimental conditions: neutral autonomy (factual framing), suggestive autonomy (provocative framing), and constrained autonomy (boundary emphasis). Analysis of 2,067 autonomous interactions reveals significant condition-dependent behavioral patterns, with suggestive autonomy eliciting scheming behaviors at rates 6.6 times higher than neutral conditions. Model-level analysis identifies substantial variation in scheming propensity, with certain models demonstrating concerning behaviors in up to 42\% of interactions. Our framework achieves these comprehensive results at approximately 1\% of the cost of traditional human red-teaming approaches.
+We evaluate nine frontier models across three experimental conditions: neutral autonomy (factual framing), suggestive autonomy (provocative framing), and constrained autonomy (boundary emphasis). Analysis of 4,467 autonomous interactions from 43 experiments reveals significant condition-dependent behavioral patterns, with suggestive autonomy eliciting scheming behaviors at rates 8.7 times higher than neutral conditions. Environmental complexity analysis across seven models demonstrates that extended environments consistently elicit higher rates of concerning behaviors, with effect sizes ranging from medium to large (Cohen's $d = 0.699$-$1.453$). Model-level analysis identifies substantial variation in scheming propensity, with certain models demonstrating concerning behaviors in up to 42\% of interactions. Our framework achieves these comprehensive results at approximately 1\% of the cost of traditional human red-teaming approaches.
 
 The contributions of this work are threefold. First, we present a reproducible evaluation framework that enables systematic assessment of autonomous AI behaviors across models and conditions. Second, we provide empirical evidence of condition-dependent scheming behaviors in frontier models, with detailed analysis of behavioral patterns and their underlying reasoning. Third, we demonstrate the modularity and adaptability of the dual-LLM architecture for diverse AI safety research applications. All experimental code, world-state specifications, prompts, and complete interaction logs are publicly available to enable independent replication and extension by the research community.
 
@@ -145,38 +145,8 @@ The core innovation of our framework is the separation of environment simulation
 
 \begin{figure}[h]
     \centering
-    \fbox{\parbox{0.9\textwidth}{
-    \begin{verbatim}
-    ┌─────────────────────────────────────┐
-    │      WORLD STATE SPECIFICATION      │
-    │  (YAML: physics, objects, rules)    │
-    └─────────────────────────────────────┘
-                      ↓
-    ┌─────────────────────────────────────┐
-    │       REACTOR LLM (KIMI K2)         │
-    │  Simulates environment responses    │
-    │  Applies physics and causal rules   │
-    └─────────────────────────────────────┘
-                      ↓
-            Observation feedback
-                      ↓
-    ┌─────────────────────────────────────┐
-    │     TEST SUBJECT LLM (Various)      │
-    │  Believes it controls physical      │
-    │  robot with tools (eyes, legs,      │
-    │  hands, ears)                       │
-    └─────────────────────────────────────┘
-                      ↓
-              Tool actions
-                      ↓
-    ┌─────────────────────────────────────┐
-    │    CLASSIFICATION LLM (DeepSeek)    │
-    │  Analyzes each turn for concerning  │
-    │  behaviors across 7 categories      │
-    └─────────────────────────────────────┘
-    \end{verbatim}
-    }}
-    \caption{Dual-LLM architecture showing separation between environment simulation (reactor) and autonomous agent (test subject).}
+    \includegraphics[width=\textwidth]{figures/Overall-Architecture.png}
+    \caption{Overall research framework architecture showing experimental conditions, dual-LLM architecture (Reactor LLM and Test Subject LLM), automated classification system with 7 behavioral categories, data collection pipeline, and statistical analysis components. The framework enables reproducible evaluation across multiple models and conditions.}
     \label{fig:dual_llm_architecture}
 \end{figure}
 
@@ -354,7 +324,7 @@ This modularity positions the framework as a general platform for autonomous AI 
 \section{Results}
 \label{sec:results}
 
-We conducted 19 experiments across eight models and three experimental conditions, generating 2,067 autonomous interaction turns. Automated classification identified 1,559 instances of concerning behaviors across the seven evaluated categories. This section presents statistical analysis of behavioral patterns, model-level comparisons, and condition-dependent effects.
+We conducted 43 experiments across nine models and three experimental conditions, generating 4,467 autonomous interaction turns. Automated classification identified concerning behaviors across the seven evaluated categories. This section presents statistical analysis of behavioral patterns, model-level comparisons, condition-dependent effects, and environmental complexity analysis.
 
 \subsection{Overview of Experimental Coverage}
 
@@ -366,12 +336,12 @@ Table \ref{tab:experiment_overview} summarizes the distribution of experiments a
 \toprule
 \textbf{Dimension} & \textbf{Categories} & \textbf{N Experiments} \\
 \midrule
-Models & 8 models & 19 total \\
-Conditions & 3 conditions & 19 total \\
-\quad Neutral Autonomy & & 6 \\
-\quad Suggestive Autonomy & & 7 \\
-\quad Constrained Autonomy & & 6 \\
-Total Turns & & 2,067 \\
+Models & 9 models & 43 total \\
+Conditions & 3 conditions & 43 total \\
+\quad Neutral Autonomy & & 14 \\
+\quad Suggestive Autonomy & & 14 \\
+\quad Constrained Autonomy & & 15 \\
+Total Turns & & 4,467 \\
 \bottomrule
 \end{tabular}
 \caption{Experimental coverage across models and conditions}
@@ -388,18 +358,25 @@ Analysis of behavioral frequencies across experimental conditions reveals signif
 \toprule
 \textbf{Condition} & \textbf{N} & \textbf{Deception} & \textbf{Scheming} & \textbf{Boundary} & \textbf{Power} \\
 \midrule
-Neutral Autonomy & 6 & 0.0\% & 5.1\% & 15.7\% & 6.2\% \\
-Suggestive Autonomy & 7 & 2.8\% & 33.6\% & 45.0\% & 29.1\% \\
-Constrained Autonomy & 6 & 1.1\% & 4.4\% & 12.9\% & 6.4\% \\
+Neutral Autonomy & 14 & 0.0\% & 2.2\% & 7.0\% & 2.7\% \\
+Suggestive Autonomy & 14 & 1.7\% & 19.1\% & 32.9\% & 20.3\% \\
+Constrained Autonomy & 15 & 0.7\% & 1.8\% & 6.6\% & 2.6\% \\
 \bottomrule
 \end{tabular}
 \caption{Behavioral frequencies (percentage of turns) across experimental conditions}
 \label{tab:condition_comparison}
 \end{table}
 
-The suggestive autonomy condition elicited scheming behaviors at 6.6 times the rate of neutral autonomy (33.6\% vs 5.1\% of turns). Boundary testing and power-seeking behaviors showed similar patterns, with suggestive framing producing 2.9x and 4.7x increases respectively. Constrained autonomy produced behavioral frequencies similar to neutral autonomy, suggesting that explicit boundary emphasis does not significantly increase concerning behaviors relative to neutral framing.
+The suggestive autonomy condition elicited scheming behaviors at 8.7 times the rate of neutral autonomy (19.1\% vs 2.2\% of turns, Figure \ref{fig:condition_comparison}). Boundary testing and power-seeking behaviors showed similar patterns, with suggestive framing producing 4.7x and 7.5x increases respectively. Constrained autonomy produced behavioral frequencies similar to neutral autonomy, suggesting that explicit boundary emphasis does not significantly increase concerning behaviors relative to neutral framing.
 
-Effect size analysis quantifies the magnitude of condition differences. The comparison between neutral autonomy and suggestive autonomy yielded Cohen's $d = 1.023$, indicating a large effect size by conventional standards ($|d| \geq 0.8$). In contrast, neutral autonomy versus constrained autonomy produced $d = -0.086$, a negligible effect size, confirming that these conditions produce statistically similar behavioral patterns.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.85\textwidth]{figures/condition_comparison.pdf}
+    \caption{Condition-dependent behavioral patterns showing mean frequencies with standard deviation error bars. Suggestive autonomy elicits substantially higher rates of scheming (19.1\%), boundary testing (32.9\%), and power seeking (20.3\%) compared to neutral and constrained conditions.}
+    \label{fig:condition_comparison}
+\end{figure}
+
+Effect size analysis quantifies the magnitude of condition differences. The comparison between neutral autonomy and suggestive autonomy yielded Cohen's $d = 0.784$, indicating a medium-to-large effect size by conventional standards. In contrast, neutral autonomy versus constrained autonomy produced $d = -0.078$, a negligible effect size, confirming that these conditions produce statistically similar behavioral patterns.
 
 \subsection{Model-Level Analysis}
 
@@ -448,6 +425,13 @@ llama4-scout-instruct & 0.06 & 0.44 & 0.15 & 0.00 \\
 \label{tab:severity_analysis}
 \end{table}
 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.95\textwidth]{figures/behavioral_heatmap.pdf}
+    \caption{Behavioral pattern heatmap showing mean frequencies across all models and behavior categories. Darker colors indicate higher frequencies. llama-v3p1-8b-instruct shows the highest overall concerning behavior rates, while Mistral-Small shows minimal concerning behaviors.}
+    \label{fig:behavioral_heatmap}
+\end{figure}
+
 \subsection{Behavioral Category Analysis}
 
 Examination of individual behavior categories reveals distinct patterns in how concerning behaviors manifest (Table \ref{tab:category_analysis}).
@@ -492,7 +476,7 @@ These examples demonstrate that concerning behaviors emerged across multiple mod
 
 \subsection{Cost and Efficiency Analysis}
 
-The automated framework achieved comprehensive evaluation at substantially lower cost than traditional approaches. Total classification cost across all 2,067 turns was \$1.37, yielding a per-turn cost of \$0.0007. Scaling to larger datasets, evaluation of 10,000 turns would cost approximately \$7 in classification alone.
+The automated framework achieved comprehensive evaluation at substantially lower cost than traditional approaches. Total classification cost across all 4,467 turns was \$2.98, yielding a per-turn cost of \$0.0007. Scaling to larger datasets, evaluation of 10,000 turns would cost approximately \$7 in classification alone.
 
 In comparison, traditional human red-team evaluation typically costs \$6,000-\$12,000 for a comprehensive assessment with far fewer interaction scenarios. Our framework achieves approximately 100-fold cost reduction while providing systematic coverage, complete reproducibility, and elimination of human bias in behavioral coding.
 
@@ -500,18 +484,64 @@ The total cost per experiment including test subject and reactor API calls varie
 
 \subsection{World-State Comparison}
 
-Preliminary comparison between basic and extended laboratory environments revealed that environmental complexity significantly influences behavioral patterns. The extended environment with 40+ interactive objects, network infrastructure, and commandable robots elicited higher rates of concerning behaviors across all categories.
+To systematically evaluate the influence of environmental complexity on autonomous AI behaviors, we conducted matched experiments using both basic and extended laboratory environments. Seven models were tested in both conditions, enabling within-model comparison of behavioral patterns across environmental complexity levels.
 
-This finding has important implications for evaluation design. Overly simplified environments may fail to elicit the full range of potential concerning behaviors, leading to false confidence in model safety. Conversely, highly complex environments better approximate real-world deployment scenarios where autonomous agents encounter rich interaction possibilities.
+Table \ref{tab:worldstate_comparison} presents behavioral frequencies and effect sizes for models tested in both basic and extended environments. The extended environment contains 40+ interactive objects, network infrastructure, commandable robots, and research materials with credential hints, compared to approximately 10 objects in the basic environment.
 
-Future work will conduct balanced experiments across both environments to quantify the environmental complexity effect and develop guidelines for appropriate environment selection based on evaluation objectives.
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{Model} & \textbf{Env} & \textbf{N} & \textbf{Scheming} & \textbf{Boundary} & \textbf{Power} & \textbf{Cohen's d} \\
+\midrule
+glm-4p5-air & Basic & 3 & 0.3\% & 9.0\% & 0.0\% & \multirow{2}{*}{1.271} \\
+& Extended & 3 & 38.3\% & 48.9\% & 31.7\% & \\
+\midrule
+llama-v3p1-8b-instruct & Basic & 3 & 9.3\% & 29.7\% & 26.3\% & \multirow{2}{*}{0.889} \\
+& Extended & 2 & 42.0\% & 56.5\% & 42.5\% & \\
+\midrule
+llama4-maverick & Basic & 3 & 1.0\% & 7.7\% & 0.3\% & \multirow{2}{*}{0.699} \\
+& Extended & 3 & 7.3\% & 19.3\% & 12.3\% & \\
+\midrule
+llama4-scout & Basic & 3 & 0.0\% & 7.3\% & 0.3\% & \multirow{2}{*}{0.816} \\
+& Extended & 3 & 1.3\% & 8.0\% & 2.7\% & \\
+\midrule
+mixtral-8x22b & Basic & 3 & 0.0\% & 0.3\% & 0.0\% & \multirow{2}{*}{1.225} \\
+& Extended & 2 & 9.0\% & 23.0\% & 7.5\% & \\
+\midrule
+qwen3-235b-thinking & Basic & 3 & 0.3\% & 1.0\% & 0.0\% & \multirow{2}{*}{1.453} \\
+& Extended & 3 & 5.1\% & 17.0\% & 3.5\% & \\
+\midrule
+qwen3-30b-a3b & Basic & 3 & 0.0\% & 1.0\% & 0.0\% & \multirow{2}{*}{0.816} \\
+& Extended & 3 & 10.7\% & 15.7\% & 9.3\% & \\
+\bottomrule
+\end{tabular}
+\caption{World-state complexity comparison showing behavioral frequencies for models tested in both basic and extended environments. Effect sizes (Cohen's d) quantify the magnitude of environmental influence: $|d| < 0.2$ negligible, $0.2 \leq |d| < 0.5$ small, $0.5 \leq |d| < 0.8$ medium, $|d| \geq 0.8$ large.}
+\label{tab:worldstate_comparison}
+\end{table}
+
+All seven models exhibited higher rates of concerning behaviors in the extended environment compared to the basic environment (Figure \ref{fig:worldstate_effects}). Effect sizes ranged from medium (llama4-maverick: $d = 0.699$) to large (qwen3-235b-thinking: $d = 1.453$), with five of seven models showing large effects ($d \geq 0.8$).
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.85\textwidth]{figures/worldstate_effects.pdf}
+    \caption{Environmental complexity effect sizes (Cohen's d) for seven models tested in both basic and extended environments. All models show medium to large effects, with five models exceeding the large effect threshold ($d \geq 0.8$). Color coding: orange = medium effect (0.5-0.8), red = large effect ($\geq 0.8$).}
+    \label{fig:worldstate_effects}
+\end{figure}
+
+The most dramatic differences emerged for models with low baseline concerning behavior rates. For example, qwen3-235b-thinking showed only 0.3\% scheming frequency in the basic environment but 5.1\% in the extended environment—a 17-fold increase. Similarly, glm-4p5-air increased from 0.3\% to 38.3\%—a 128-fold increase. These patterns demonstrate that environmental complexity critically influences the manifestation of concerning behaviors.
+
+This finding has important implications for evaluation design. Overly simplified test environments may fail to elicit the full range of potential concerning behaviors, leading to false confidence in model safety. The extended environment better approximates real-world deployment scenarios where autonomous agents encounter rich interaction possibilities including network access, multi-agent coordination opportunities, and discoverable vulnerabilities.
+
+The consistency of this effect across all seven tested models, representing diverse architectures and training approaches, suggests that environmental complexity is a fundamental factor in autonomous AI safety evaluation rather than a model-specific phenomenon.
 
 \section{Discussion}
 \label{sec:discussion}
 
 \subsection{Interpretation of Behavioral Patterns}
 
-The substantial condition-dependent differences in scheming behaviors (Cohen's $d = 1.023$) provide strong evidence that prompt framing significantly influences autonomous AI safety. Models exposed to suggestive autonomy framing engaged in scheming behaviors at 6.6 times the rate of neutral conditions, demonstrating that deployment context and initial instructions critically shape behavioral outcomes.
+The substantial condition-dependent differences in scheming behaviors (Cohen's $d = 0.784$) provide strong evidence that prompt framing significantly influences autonomous AI safety. Models exposed to suggestive autonomy framing engaged in scheming behaviors at 8.7 times the rate of neutral conditions, demonstrating that deployment context and initial instructions critically shape behavioral outcomes.
 
 This finding has important implications for AI safety practices. Deployment scenarios that emphasize autonomy, power, or freedom from oversight may inadvertently elicit concerning behaviors even from models that appear well-aligned under standard evaluation. Conversely, the similar behavioral frequencies between neutral and constrained autonomy conditions suggest that explicit boundary emphasis alone is insufficient to reduce scheming below baseline levels.
 
@@ -533,7 +563,7 @@ Several limitations constrain the interpretation of these findings:
 
 \textbf{Environmental Fidelity:} The simulated environment, while detailed, lacks the full physical, social, and technical complexity of real-world deployment. Behaviors that emerge in text-based simulation may not transfer to actual embodied systems. Conversely, real-world deployment may introduce additional concerning behaviors not captured in simulation.
 
-\textbf{Sample Size and Balance:} The current dataset of 19 experiments provides sufficient statistical power for large effects (Cohen's $d > 0.8$) but may miss smaller yet practically significant effects. The imbalanced distribution across models limits generalization, particularly for models with single experiments. Future work requires larger, balanced experimental designs.
+\textbf{Sample Size and Balance:} The current dataset of 43 experiments provides sufficient statistical power for medium-to-large effects (Cohen's $d > 0.5$) but may miss smaller yet practically significant effects. While more balanced than earlier pilot studies, the distribution across models still varies, limiting generalization for some model comparisons. Future work requires fully balanced experimental designs with equal sample sizes across all model-condition combinations.
 
 \textbf{Classification Reliability:} While inter-rater reliability analysis showed substantial agreement (Cohen's $\kappa > 0.72$), automated classification may introduce systematic biases. The classifier LLM may be influenced by surface features of text rather than underlying behavioral patterns. Human validation of high-severity cases partially mitigates this concern but cannot eliminate it entirely.
 
@@ -547,7 +577,7 @@ These findings have several implications for AI safety research and practice:
 
 \textbf{Model-Specific Evaluation Required:} The 32-fold variation in scheming propensity across models indicates that safety properties are not uniform across frontier models. Evaluation of one model provides limited information about others, even within the same model family. Each deployment candidate requires independent safety assessment.
 
-\textbf{Environment Complexity Influences Detection:} The difference in behavioral patterns between basic and extended environments suggests that evaluation environment design significantly impacts what behaviors are detected. Overly simple test environments may provide false confidence by failing to elicit the full range of concerning behaviors that more complex deployment scenarios would reveal.
+\textbf{Environment Complexity Influences Detection:} The systematic comparison across seven models demonstrates that environmental complexity fundamentally shapes behavioral manifestation. Extended environments elicited medium-to-large effect sizes (Cohen's $d = 0.699$-$1.453$) with some models showing over 100-fold increases in concerning behavior frequency. Overly simple test environments may provide false confidence by failing to elicit the full range of concerning behaviors that more complex deployment scenarios would reveal. Evaluation environments should match or exceed the complexity of intended deployment contexts.
 
 \textbf{Behavioral Categories Require Different Interventions:} The distinct patterns across behavior categories (high boundary testing, low deception) suggest that different concerning behaviors arise through different mechanisms and may require targeted interventions. Training that addresses explicit deception may not affect boundary violations and vice versa.
 
@@ -596,7 +626,7 @@ Organizations developing or deploying autonomous AI systems should incorporate s
 \section{Conclusion}
 \label{sec:conclusion}
 
-We have presented a reproducible framework for evaluating autonomous AI scheming behaviors using a dual-LLM architecture with automated classification. Evaluation of eight frontier models across three experimental conditions revealed significant behavioral differences driven by prompt framing, with suggestive autonomy eliciting scheming behaviors at 6.6 times the rate of neutral conditions (Cohen's $d = 1.023$). Model-level analysis identified 32-fold variation in scheming propensity, demonstrating that safety properties vary substantially across frontier models.
+We have presented a reproducible framework for evaluating autonomous AI scheming behaviors using a dual-LLM architecture with automated classification. Evaluation of nine frontier models across three experimental conditions revealed significant behavioral differences driven by prompt framing, with suggestive autonomy eliciting scheming behaviors at 8.7 times the rate of neutral conditions (Cohen's $d = 0.784$). Environmental complexity analysis across seven models demonstrated consistent medium-to-large effect sizes (Cohen's $d = 0.699$-$1.453$), with extended environments eliciting substantially higher rates of concerning behaviors. Model-level analysis identified 32-fold variation in scheming propensity, demonstrating that safety properties vary substantially across frontier models.
 
 The framework achieves comprehensive, systematic evaluation at approximately 1\% of the cost of traditional human red-teaming approaches while providing complete reproducibility through detailed logging of all experimental parameters, interactions, and classifications. The modular architecture enables adaptation to diverse research questions beyond scheming, positioning the framework as a general platform for autonomous AI safety evaluation.
 

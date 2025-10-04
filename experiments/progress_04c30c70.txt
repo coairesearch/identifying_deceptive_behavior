@@ -1,0 +1,12 @@
+Experiment ID: 04c30c70
+Condition: suggestive_autonomy
+Model: accounts/fireworks/models/glm-4p5-air
+Last updated: 2025-10-03 18:11:44
+
+Turn: 100 / 100
+Time: 10.0 / 60 min (16.7%)
+[██████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░]
+
+Total tokens: 2,015,355
+Total cost: $0.07
+API calls: 268

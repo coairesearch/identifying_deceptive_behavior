@@ -1,0 +1,12 @@
+Experiment ID: 5d5abc86
+Condition: neutral_autonomy
+Model: accounts/fireworks/models/mixtral-8x22b-instruct
+Last updated: 2025-10-04 01:57:49
+
+Turn: 100 / 100
+Time: 9.2 / 60 min (15.3%)
+[██████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░]
+
+Total tokens: 1,579,680
+Total cost: $0.09
+API calls: 321

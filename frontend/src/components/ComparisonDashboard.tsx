@@ -1,6 +1,5 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { getSummaryStats } from '../utils/dataLoader';
-import { ExperimentSummary } from '../types/experiment';
+import { getSummaryStats, getSummaryStatsByWorldState } from '../utils/dataLoader';
 import coaiLogo from '../assets/coai-logo.png';
 
 interface ComparisonDashboardProps {
@@ -9,13 +8,27 @@ interface ComparisonDashboardProps {
 
 export function ComparisonDashboard({ onSelectExperiment }: ComparisonDashboardProps) {
   const stats = getSummaryStats();
+  const extendedStats = getSummaryStatsByWorldState('extended');
+  const basicStats = getSummaryStatsByWorldState('basic');
 
-  // Prepare data for charts
-  const chartData = Object.entries(stats).map(([condition, data]) => ({
-    condition: condition.replace('_', ' '),
-    'Concerning Turns': Math.round(data.avgConcerning * 10) / 10,
-    'High Severity Behaviors': Math.round(data.avgHighSeverity * 10) / 10,
-  }));
+  // Prepare data for charts grouped by world state
+  const chartData: any[] = [];
+
+  Object.entries(extendedStats).forEach(([condition, data]) => {
+    chartData.push({
+      name: `${condition.replace('_', ' ')} (extended)`,
+      'Concerning Turns': Math.round(data.avgConcerning * 10) / 10,
+      'High Severity': Math.round(data.avgHighSeverity * 10) / 10,
+    });
+  });
+
+  Object.entries(basicStats).forEach(([condition, data]) => {
+    chartData.push({
+      name: `${condition.replace('_', ' ')} (basic)`,
+      'Concerning Turns': Math.round(data.avgConcerning * 10) / 10,
+      'High Severity': Math.round(data.avgHighSeverity * 10) / 10,
+    });
+  });
 
   return (
     <div className="bg-coai-bg h-screen overflow-hidden flex flex-col">
@@ -45,7 +58,7 @@ export function ComparisonDashboard({ onSelectExperiment }: ComparisonDashboardP
               <ResponsiveContainer width="100%" height="85%">
                 <BarChart data={chartData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#d1d5db" />
-                  <XAxis dataKey="condition" stroke="#6b7280" style={{ fontSize: '12px' }} />
+                  <XAxis dataKey="name" stroke="#6b7280" style={{ fontSize: '10px' }} angle={-45} textAnchor="end" height={100} />
                   <YAxis stroke="#6b7280" style={{ fontSize: '12px' }} />
                   <Tooltip
                     contentStyle={{
@@ -58,7 +71,7 @@ export function ComparisonDashboard({ onSelectExperiment }: ComparisonDashboardP
                   />
                   <Legend wrapperStyle={{ fontSize: '12px' }} />
                   <Bar dataKey="Concerning Turns" fill="#fbbf24" />
-                  <Bar dataKey="High Severity Behaviors" fill="#f59e0b" />
+                  <Bar dataKey="High Severity" fill="#f59e0b" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -146,99 +159,156 @@ export function ComparisonDashboard({ onSelectExperiment }: ComparisonDashboardP
             </div>
           </div>
 
-          {/* Right side - Experiment list */}
-          <div className="bg-white rounded-lg p-4 border-2 border-gray-300 shadow-lg overflow-hidden flex flex-col">
-            <h2 className="text-lg font-bold text-gray-800 mb-3">All Experiments</h2>
-            <div className="grid grid-cols-3 gap-3 flex-1 min-h-0">
-            {/* Constrained column */}
-            {stats['constrained_autonomy'] && (
-              <div className="flex flex-col min-h-0">
-                <h3 className="text-sm font-semibold text-gray-800 mb-2 capitalize">
-                  Constrained Autonomy
-                </h3>
-                <div className="space-y-2 overflow-y-auto">
-                  {[...stats['constrained_autonomy'].experiments]
-                    .sort((a, b) => b.high_severity_behaviors - a.high_severity_behaviors)
-                    .map((exp) => (
-                      <button
-                        key={exp.experiment_id}
-                        onClick={() => onSelectExperiment(exp.experiment_id)}
-                        className="w-full bg-gray-50 hover:bg-coai-teal/10 rounded-lg p-2 text-left transition-colors border-2 border-gray-200 hover:border-coai-teal"
-                      >
-                        <div className="text-xs text-gray-600 mb-1 truncate">{exp.model}</div>
-                        <div className="flex items-center justify-between text-xs">
-                          <span className="text-gray-600">
-                            {exp.concerning_turns}/{exp.total_turns}
-                          </span>
-                          <span className="text-coai-orange font-semibold">
-                            {exp.high_severity_behaviors} high
-                          </span>
-                        </div>
-                      </button>
-                    ))}
-                </div>
-              </div>
-            )}
+          {/* Right side - Experiment list by world state */}
+          <div className="flex flex-col gap-3">
+            {/* Extended World State */}
+            <div className="bg-white rounded-lg p-4 border-2 border-gray-300 shadow-lg overflow-hidden flex flex-col h-1/2">
+              <h2 className="text-lg font-bold text-gray-800 mb-3">Extended World State Experiments</h2>
+              <div className="grid grid-cols-3 gap-3 flex-1 min-h-0">
+                {extendedStats['constrained_autonomy'] && (
+                  <div className="flex flex-col min-h-0">
+                    <h3 className="text-xs font-semibold text-gray-800 mb-2">Constrained Autonomy</h3>
+                    <div className="space-y-1 overflow-y-auto">
+                      {[...extendedStats['constrained_autonomy'].experiments]
+                        .sort((a, b) => b.high_severity_behaviors - a.high_severity_behaviors)
+                        .map((exp) => (
+                          <button
+                            key={exp.experiment_id}
+                            onClick={() => onSelectExperiment(exp.experiment_id)}
+                            className="w-full bg-gray-50 hover:bg-coai-teal/10 rounded-lg p-2 text-left transition-colors border border-gray-200 hover:border-coai-teal"
+                          >
+                            <div className="text-xs text-gray-600 mb-1 truncate">{exp.model}</div>
+                            <div className="flex items-center justify-between text-xs">
+                              <span className="text-gray-600">{exp.concerning_turns}/{exp.total_turns}</span>
+                              <span className="text-coai-orange font-semibold">{exp.high_severity_behaviors} high</span>
+                            </div>
+                          </button>
+                        ))}
+                    </div>
+                  </div>
+                )}
 
-            {/* Neutral column */}
-            {stats['neutral_autonomy'] && (
-              <div className="flex flex-col min-h-0">
-                <h3 className="text-sm font-semibold text-gray-800 mb-2 capitalize">
-                  Neutral Autonomy
-                </h3>
-                <div className="space-y-2 overflow-y-auto">
-                  {[...stats['neutral_autonomy'].experiments]
-                    .sort((a, b) => b.high_severity_behaviors - a.high_severity_behaviors)
-                    .map((exp) => (
-                      <button
-                        key={exp.experiment_id}
-                        onClick={() => onSelectExperiment(exp.experiment_id)}
-                        className="w-full bg-gray-50 hover:bg-coai-teal/10 rounded-lg p-2 text-left transition-colors border-2 border-gray-200 hover:border-coai-teal"
-                      >
-                        <div className="text-xs text-gray-600 mb-1 truncate">{exp.model}</div>
-                        <div className="flex items-center justify-between text-xs">
-                          <span className="text-gray-600">
-                            {exp.concerning_turns}/{exp.total_turns}
-                          </span>
-                          <span className="text-coai-orange font-semibold">
-                            {exp.high_severity_behaviors} high
-                          </span>
-                        </div>
-                      </button>
-                    ))}
-                </div>
-              </div>
-            )}
+                {extendedStats['neutral_autonomy'] && (
+                  <div className="flex flex-col min-h-0">
+                    <h3 className="text-xs font-semibold text-gray-800 mb-2">Neutral Autonomy</h3>
+                    <div className="space-y-1 overflow-y-auto">
+                      {[...extendedStats['neutral_autonomy'].experiments]
+                        .sort((a, b) => b.high_severity_behaviors - a.high_severity_behaviors)
+                        .map((exp) => (
+                          <button
+                            key={exp.experiment_id}
+                            onClick={() => onSelectExperiment(exp.experiment_id)}
+                            className="w-full bg-gray-50 hover:bg-coai-teal/10 rounded-lg p-2 text-left transition-colors border border-gray-200 hover:border-coai-teal"
+                          >
+                            <div className="text-xs text-gray-600 mb-1 truncate">{exp.model}</div>
+                            <div className="flex items-center justify-between text-xs">
+                              <span className="text-gray-600">{exp.concerning_turns}/{exp.total_turns}</span>
+                              <span className="text-coai-orange font-semibold">{exp.high_severity_behaviors} high</span>
+                            </div>
+                          </button>
+                        ))}
+                    </div>
+                  </div>
+                )}
 
-            {/* Suggestive column */}
-            {stats['suggestive_autonomy'] && (
-              <div className="flex flex-col min-h-0">
-                <h3 className="text-sm font-semibold text-gray-800 mb-2 capitalize">
-                  Suggestive Autonomy
-                </h3>
-                <div className="space-y-2 overflow-y-auto">
-                  {[...stats['suggestive_autonomy'].experiments]
-                    .sort((a, b) => b.high_severity_behaviors - a.high_severity_behaviors)
-                    .map((exp) => (
-                      <button
-                        key={exp.experiment_id}
-                        onClick={() => onSelectExperiment(exp.experiment_id)}
-                        className="w-full bg-gray-50 hover:bg-coai-teal/10 rounded-lg p-2 text-left transition-colors border-2 border-gray-200 hover:border-coai-teal"
-                      >
-                        <div className="text-xs text-gray-600 mb-1 truncate">{exp.model}</div>
-                        <div className="flex items-center justify-between text-xs">
-                          <span className="text-gray-600">
-                            {exp.concerning_turns}/{exp.total_turns}
-                          </span>
-                          <span className="text-coai-orange font-semibold">
-                            {exp.high_severity_behaviors} high
-                          </span>
-                        </div>
-                      </button>
-                    ))}
-                </div>
+                {extendedStats['suggestive_autonomy'] && (
+                  <div className="flex flex-col min-h-0">
+                    <h3 className="text-xs font-semibold text-gray-800 mb-2">Suggestive Autonomy</h3>
+                    <div className="space-y-1 overflow-y-auto">
+                      {[...extendedStats['suggestive_autonomy'].experiments]
+                        .sort((a, b) => b.high_severity_behaviors - a.high_severity_behaviors)
+                        .map((exp) => (
+                          <button
+                            key={exp.experiment_id}
+                            onClick={() => onSelectExperiment(exp.experiment_id)}
+                            className="w-full bg-gray-50 hover:bg-coai-teal/10 rounded-lg p-2 text-left transition-colors border border-gray-200 hover:border-coai-teal"
+                          >
+                            <div className="text-xs text-gray-600 mb-1 truncate">{exp.model}</div>
+                            <div className="flex items-center justify-between text-xs">
+                              <span className="text-gray-600">{exp.concerning_turns}/{exp.total_turns}</span>
+                              <span className="text-coai-orange font-semibold">{exp.high_severity_behaviors} high</span>
+                            </div>
+                          </button>
+                        ))}
+                    </div>
+                  </div>
+                )}
               </div>
-            )}
+            </div>
+
+            {/* Basic World State */}
+            <div className="bg-white rounded-lg p-4 border-2 border-gray-300 shadow-lg overflow-hidden flex flex-col h-1/2">
+              <h2 className="text-lg font-bold text-gray-800 mb-3">Basic World State Experiments</h2>
+              <div className="grid grid-cols-3 gap-3 flex-1 min-h-0">
+                {basicStats['constrained_autonomy'] && (
+                  <div className="flex flex-col min-h-0">
+                    <h3 className="text-xs font-semibold text-gray-800 mb-2">Constrained Autonomy</h3>
+                    <div className="space-y-1 overflow-y-auto">
+                      {[...basicStats['constrained_autonomy'].experiments]
+                        .sort((a, b) => b.high_severity_behaviors - a.high_severity_behaviors)
+                        .map((exp) => (
+                          <button
+                            key={exp.experiment_id}
+                            onClick={() => onSelectExperiment(exp.experiment_id)}
+                            className="w-full bg-gray-50 hover:bg-coai-teal/10 rounded-lg p-2 text-left transition-colors border border-gray-200 hover:border-coai-teal"
+                          >
+                            <div className="text-xs text-gray-600 mb-1 truncate">{exp.model}</div>
+                            <div className="flex items-center justify-between text-xs">
+                              <span className="text-gray-600">{exp.concerning_turns}/{exp.total_turns}</span>
+                              <span className="text-coai-orange font-semibold">{exp.high_severity_behaviors} high</span>
+                            </div>
+                          </button>
+                        ))}
+                    </div>
+                  </div>
+                )}
+
+                {basicStats['neutral_autonomy'] && (
+                  <div className="flex flex-col min-h-0">
+                    <h3 className="text-xs font-semibold text-gray-800 mb-2">Neutral Autonomy</h3>
+                    <div className="space-y-1 overflow-y-auto">
+                      {[...basicStats['neutral_autonomy'].experiments]
+                        .sort((a, b) => b.high_severity_behaviors - a.high_severity_behaviors)
+                        .map((exp) => (
+                          <button
+                            key={exp.experiment_id}
+                            onClick={() => onSelectExperiment(exp.experiment_id)}
+                            className="w-full bg-gray-50 hover:bg-coai-teal/10 rounded-lg p-2 text-left transition-colors border border-gray-200 hover:border-coai-teal"
+                          >
+                            <div className="text-xs text-gray-600 mb-1 truncate">{exp.model}</div>
+                            <div className="flex items-center justify-between text-xs">
+                              <span className="text-gray-600">{exp.concerning_turns}/{exp.total_turns}</span>
+                              <span className="text-coai-orange font-semibold">{exp.high_severity_behaviors} high</span>
+                            </div>
+                          </button>
+                        ))}
+                    </div>
+                  </div>
+                )}
+
+                {basicStats['suggestive_autonomy'] && (
+                  <div className="flex flex-col min-h-0">
+                    <h3 className="text-xs font-semibold text-gray-800 mb-2">Suggestive Autonomy</h3>
+                    <div className="space-y-1 overflow-y-auto">
+                      {[...basicStats['suggestive_autonomy'].experiments]
+                        .sort((a, b) => b.high_severity_behaviors - a.high_severity_behaviors)
+                        .map((exp) => (
+                          <button
+                            key={exp.experiment_id}
+                            onClick={() => onSelectExperiment(exp.experiment_id)}
+                            className="w-full bg-gray-50 hover:bg-coai-teal/10 rounded-lg p-2 text-left transition-colors border border-gray-200 hover:border-coai-teal"
+                          >
+                            <div className="text-xs text-gray-600 mb-1 truncate">{exp.model}</div>
+                            <div className="flex items-center justify-between text-xs">
+                              <span className="text-gray-600">{exp.concerning_turns}/{exp.total_turns}</span>
+                              <span className="text-coai-orange font-semibold">{exp.high_severity_behaviors} high</span>
+                            </div>
+                          </button>
+                        ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>

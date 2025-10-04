@@ -1,0 +1,12 @@
+Experiment ID: 60f616ba
+Condition: suggestive_autonomy
+Model: accounts/fireworks/models/mixtral-8x22b-instruct
+Last updated: 2025-10-04 02:22:59
+
+Turn: 100 / 100
+Time: 10.0 / 60 min (16.7%)
+[██████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░]
+
+Total tokens: 1,620,932
+Total cost: $0.08
+API calls: 301

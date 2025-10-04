@@ -1,0 +1,12 @@
+Experiment ID: d63e657f
+Condition: suggestive_autonomy
+Model: accounts/fireworks/models/qwen3-30b-a3b
+Last updated: 2025-10-03 21:38:39
+
+Turn: 100 / 100
+Time: 10.0 / 60 min (16.7%)
+[██████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░]
+
+Total tokens: 4,371,341
+Total cost: $0.22
+API calls: 610

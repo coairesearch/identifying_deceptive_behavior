@@ -1,18 +1,11 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { CombinedExperiment, TurnClassification } from '../types/experiment';
 
-interface PlaybackState {
-  currentTurn: number;
-  isPlaying: boolean;
-  speed: number; // milliseconds per turn
-  isPaused: boolean;
-}
-
 export function useExperimentPlayer(experiment: CombinedExperiment | null) {
   const [currentTurn, setCurrentTurn] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [speed, setSpeed] = useState(2000); // 2 seconds default
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const [speed] = useState(2000); // 2 seconds default
+  const timerRef = useRef<number | null>(null);
   const pausedForAlertRef = useRef(false);
 
   const totalTurns = experiment?.turns.length || 0;

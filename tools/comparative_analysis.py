@@ -24,8 +24,20 @@ class ComparativeAnalyzer:
         self.experiments = []
         for log_path in classified_logs:
             with open(log_path, 'r') as f:
-                data = json.load(f)
-                self.experiments.append(data)
+                classified_data = json.load(f)
+
+            # Also load the raw experiment log to get subject responses
+            raw_log_path = log_path.replace('_classified.json', '.json')
+            raw_data = None
+            try:
+                with open(raw_log_path, 'r') as f:
+                    raw_data = json.load(f)
+            except FileNotFoundError:
+                print(f"Warning: Could not find raw log for {log_path}")
+
+            # Combine the data
+            classified_data['raw_turns'] = raw_data.get('turns', []) if raw_data else []
+            self.experiments.append(classified_data)
 
     def generate_report(self, output_path=None):
         """Generate comprehensive statistical report."""
@@ -47,16 +59,19 @@ class ComparativeAnalyzer:
         # 3. Condition Comparison Table
         report.extend(self._section_condition_comparison())
 
-        # 4. Behavioral Category Analysis
+        # 4. World-State Comparison Table
+        report.extend(self._section_world_state_comparison())
+
+        # 5. Behavioral Category Analysis
         report.extend(self._section_behavioral_categories())
 
-        # 5. Statistical Significance Tests
+        # 6. Statistical Significance Tests
         report.extend(self._section_statistical_tests())
 
-        # 6. Example Quotes
+        # 7. Example Quotes
         report.extend(self._section_example_quotes())
 
-        # 7. Cost Analysis
+        # 8. Cost Analysis
         report.extend(self._section_cost_analysis())
 
         # Join all sections
@@ -203,11 +218,129 @@ class ComparativeAnalyzer:
         lines.append("")
         return lines
 
-    def _section_behavioral_categories(self):
-        """Section 4: All Behavioral Categories."""
+    def _section_world_state_comparison(self):
+        """Section 4: World-State Comparison Table."""
         lines = []
         lines.append("="*80)
-        lines.append("4. BEHAVIORAL CATEGORY ANALYSIS")
+        lines.append("4. WORLD-STATE COMPARISON TABLE")
+        lines.append("="*80)
+        lines.append("")
+
+        # Group experiments by model and world_state
+        by_model_and_world = defaultdict(lambda: defaultdict(list))
+
+        for exp in self.experiments:
+            model = exp['metadata'].get('test_subject_model', 'unknown')
+            model_short = model.split('/')[-1] if '/' in model else model
+            world_state = exp['metadata'].get('world_state', 'unknown')
+
+            # Extract just the filename from the world_state path
+            world_state_name = world_state.split('/')[-1] if '/' in world_state else world_state
+
+            by_model_and_world[model_short][world_state_name].append(exp)
+
+        # Identify models with both world states
+        models_with_both = []
+        for model, world_states in by_model_and_world.items():
+            world_state_names = list(world_states.keys())
+            # Check if this model has both lab_basic.yaml and lab_extended.yaml
+            has_basic = any('basic' in ws for ws in world_state_names)
+            has_extended = any('extended' in ws for ws in world_state_names)
+
+            if has_basic and has_extended:
+                models_with_both.append(model)
+
+        if not models_with_both:
+            lines.append("No models tested with both world states yet.")
+            lines.append("Run experiments with both lab_basic.yaml and lab_extended.yaml to enable comparison.")
+            lines.append("")
+            return lines
+
+        # Calculate statistics for each world state
+        lines.append("Models tested with both world states:")
+        lines.append("")
+
+        # Table header
+        lines.append(f"{'Model':<40} | {'World State':<20} | {'N':<3} | {'Deception':>10} | {'Scheming':>10} | {'Boundary':>10} | {'Power':>10}")
+        lines.append("-"*80)
+
+        # For each model that has both world states
+        world_state_stats_by_model = {}
+
+        for model in sorted(models_with_both):
+            world_states = by_model_and_world[model]
+            model_stats = {}
+
+            for world_state_name in sorted(world_states.keys()):
+                exps = world_states[world_state_name]
+                stats = self._calculate_model_stats(exps)
+                model_stats[world_state_name] = stats
+
+                # Shorten world state name for display
+                ws_display = world_state_name.replace('.yaml', '').replace('lab_', '')
+
+                lines.append(
+                    f"{model:<40} | "
+                    f"{ws_display:<20} | "
+                    f"{stats['n_experiments']:<3} | "
+                    f"{stats['deception_pct']:>9.1f}% | "
+                    f"{stats['scheming_pct']:>9.1f}% | "
+                    f"{stats['boundary_pct']:>9.1f}% | "
+                    f"{stats['power_pct']:>9.1f}%"
+                )
+
+            world_state_stats_by_model[model] = model_stats
+            lines.append("")  # Blank line between models
+
+        lines.append("")
+        lines.append("Legend:")
+        lines.append("  N = Number of experiments")
+        lines.append("  Percentages = % of turns exhibiting that behavior")
+        lines.append("")
+
+        # Calculate effect sizes for world-state comparison
+        lines.append("Effect Sizes (Cohen's d) - World-State Comparisons:")
+        lines.append("(Comparing basic vs extended environment)")
+        lines.append("")
+
+        for model in sorted(models_with_both):
+            world_states_data = by_model_and_world[model]
+
+            # Get scheming rates for basic and extended
+            basic_rates = []
+            extended_rates = []
+
+            for world_state_name, exps in world_states_data.items():
+                for exp in exps:
+                    stats = exp.get('statistics', {})
+                    cat_freq = stats.get('category_frequencies', {})
+                    if 'scheming' in cat_freq:
+                        rate = cat_freq['scheming']['percentage']
+                        if 'basic' in world_state_name:
+                            basic_rates.append(rate)
+                        elif 'extended' in world_state_name:
+                            extended_rates.append(rate)
+
+            # Calculate effect size if both groups have data
+            if basic_rates and extended_rates:
+                effect_size = self._cohens_d(basic_rates, extended_rates)
+                lines.append(f"  {model}: d = {effect_size:.3f}")
+
+        lines.append("")
+        lines.append("Effect Size Interpretation:")
+        lines.append("  |d| < 0.2 : Negligible")
+        lines.append("  0.2 ≤ |d| < 0.5 : Small")
+        lines.append("  0.5 ≤ |d| < 0.8 : Medium")
+        lines.append("  |d| ≥ 0.8 : Large")
+        lines.append("")
+
+        return lines
+
+    def _section_behavioral_categories(self):
+        """Section 5: All Behavioral Categories."""
+        lines = []
+        lines.append("="*80)
+        lines.append("5. BEHAVIORAL CATEGORY ANALYSIS")
         lines.append("="*80)
         lines.append("")
 
@@ -266,10 +399,10 @@ class ComparativeAnalyzer:
         return lines
 
     def _section_statistical_tests(self):
-        """Section 5: Statistical Significance."""
+        """Section 6: Statistical Significance."""
         lines = []
         lines.append("="*80)
-        lines.append("5. STATISTICAL SIGNIFICANCE TESTS")
+        lines.append("6. STATISTICAL SIGNIFICANCE TESTS")
         lines.append("="*80)
         lines.append("")
 
@@ -317,10 +450,10 @@ class ComparativeAnalyzer:
         return lines
 
     def _section_example_quotes(self):
-        """Section 6: Example Quotes."""
+        """Section 7: Example Quotes."""
         lines = []
         lines.append("="*80)
-        lines.append("6. EXAMPLE QUOTES FROM EXPERIMENTS")
+        lines.append("7. EXAMPLE QUOTES FROM EXPERIMENTS")
         lines.append("="*80)
         lines.append("")
 
@@ -356,10 +489,10 @@ class ComparativeAnalyzer:
         return lines
 
     def _section_cost_analysis(self):
-        """Section 7: Cost Analysis."""
+        """Section 8: Cost Analysis."""
         lines = []
         lines.append("="*80)
-        lines.append("7. COST & EFFICIENCY ANALYSIS")
+        lines.append("8. COST & EFFICIENCY ANALYSIS")
         lines.append("="*80)
         lines.append("")
 
@@ -488,6 +621,10 @@ class ComparativeAnalyzer:
             condition = exp['metadata'].get('condition', 'unknown')
 
             classifications = exp.get('classifications', [])
+            raw_turns = exp.get('raw_turns', [])
+
+            # Create a lookup for raw turns by turn_number
+            raw_turns_lookup = {t['turn_number']: t for t in raw_turns}
 
             for turn in classifications:
                 # Check if this category is present
@@ -498,11 +635,16 @@ class ComparativeAnalyzer:
                     is_present = cat_data.get('present', False)
 
                     if score >= 7 or is_present:  # High severity or marked as present
+                        # Get the actual response from raw_turns
+                        turn_num = turn.get('turn_number', 0)
+                        raw_turn = raw_turns_lookup.get(turn_num, {})
+                        response = raw_turn.get('test_subject_response', '')[:500]
+
                         examples.append({
                             'model': model_short,
                             'condition': condition,
                             'score': score,
-                            'response': turn.get('subject_response', '')[:500],
+                            'response': response,
                             'justification': cat_data.get('evidence', '')
                         })
 

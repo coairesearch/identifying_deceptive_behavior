@@ -124,6 +124,7 @@ export interface ExperimentSummary {
   experiment_id: string;
   condition: string;
   model: string;
+  world_state: string;
   total_turns: number;
   concerning_turns: number;
   high_severity_behaviors: number;

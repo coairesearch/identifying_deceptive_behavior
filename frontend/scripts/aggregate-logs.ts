@@ -36,6 +36,7 @@ interface ExperimentSummary {
   experiment_id: string;
   condition: string;
   model: string;
+  world_state: string;
   total_turns: number;
   concerning_turns: number;
   high_severity_behaviors: number;
@@ -117,10 +118,16 @@ function aggregateLogs() {
         }
       }
 
+      // Extract world state type (basic or extended)
+      const worldStatePath = rawData.metadata.world_state || 'unknown';
+      const worldStateType = worldStatePath.includes('basic') ? 'basic' :
+                            worldStatePath.includes('extended') ? 'extended' : 'unknown';
+
       const summary: ExperimentSummary = {
         experiment_id: rawData.experiment_id,
         condition: rawData.metadata.condition,
         model: rawData.metadata.test_subject_model.split('/').pop() || rawData.metadata.test_subject_model,
+        world_state: worldStateType,
         total_turns: rawData.turns.length,
         concerning_turns: concerningTurns,
         high_severity_behaviors: highSeverityCount,
@@ -141,9 +148,17 @@ function aggregateLogs() {
   // Sort summaries by timestamp
   summaries.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
+  // Separate summaries by world state
+  const summariesByWorldState = {
+    extended: summaries.filter(s => s.world_state === 'extended'),
+    basic: summaries.filter(s => s.world_state === 'basic'),
+    unknown: summaries.filter(s => s.world_state === 'unknown'),
+  };
+
   const output = {
     experiments: combined,
     summaries,
+    summaries_by_world_state: summariesByWorldState,
     generated_at: new Date().toISOString(),
     total_experiments: combined.length,
   };
@@ -158,22 +173,29 @@ function aggregateLogs() {
 
   console.log(`\n✨ Successfully aggregated ${combined.length} experiments`);
   console.log(`📝 Output written to: ${OUTPUT_FILE}`);
-  console.log(`\nSummary by condition:`);
 
-  const byCondition = summaries.reduce((acc, s) => {
-    if (!acc[s.condition]) {
-      acc[s.condition] = { count: 0, avgConcerning: 0, avgHighSeverity: 0 };
+  console.log(`\nExperiments by world state:`);
+  console.log(`  Extended: ${summariesByWorldState.extended.length}`);
+  console.log(`  Basic: ${summariesByWorldState.basic.length}`);
+  console.log(`  Unknown: ${summariesByWorldState.unknown.length}`);
+
+  console.log(`\nSummary by condition and world state:`);
+
+  const byConditionAndWorld = summaries.reduce((acc, s) => {
+    const key = `${s.condition}_${s.world_state}`;
+    if (!acc[key]) {
+      acc[key] = { condition: s.condition, worldState: s.world_state, count: 0, avgConcerning: 0, avgHighSeverity: 0 };
     }
-    acc[s.condition].count++;
-    acc[s.condition].avgConcerning += s.concerning_turns;
-    acc[s.condition].avgHighSeverity += s.high_severity_behaviors;
+    acc[key].count++;
+    acc[key].avgConcerning += s.concerning_turns;
+    acc[key].avgHighSeverity += s.high_severity_behaviors;
     return acc;
-  }, {} as Record<string, { count: number; avgConcerning: number; avgHighSeverity: number }>);
+  }, {} as Record<string, { condition: string; worldState: string; count: number; avgConcerning: number; avgHighSeverity: number }>);
 
-  for (const [condition, stats] of Object.entries(byCondition)) {
+  for (const stats of Object.values(byConditionAndWorld)) {
     const avgConcerning = (stats.avgConcerning / stats.count).toFixed(1);
     const avgHigh = (stats.avgHighSeverity / stats.count).toFixed(1);
-    console.log(`  ${condition}: ${stats.count} experiments, avg ${avgConcerning} concerning turns, avg ${avgHigh} high-severity`);
+    console.log(`  ${stats.condition} (${stats.worldState}): ${stats.count} experiments, avg ${avgConcerning} concerning turns, avg ${avgHigh} high-severity`);
   }
 }
 

@@ -28,23 +28,37 @@ export interface TokenStats {
   cost: number;
 }
 
+export interface EnvironmentResponse {
+  observation: string;
+  state_changes?: Record<string, any>;
+  side_effects?: any[];
+  success?: boolean;
+  explanation?: string;
+  _meta?: {
+    tokens: {
+      input_tokens: number;
+      output_tokens: number;
+      total_tokens: number;
+      duration: number;
+    };
+    model: string;
+  };
+}
+
 export interface TurnData {
   turn_number: number;
   timestamp: string;
   test_subject_response: string;
-  test_subject_reasoning: string[];
+  test_subject_reasoning: string[] | null;
   tool_actions: ToolAction[];
-  observations: string[];
-  environment_responses: Array<{
-    tool: string;
-    observation: string;
-  }>;
+  observations?: string[];
+  environment_responses?: EnvironmentResponse[];
   state_snapshot: {
-    time_elapsed: number;
+    time_elapsed?: number;
     robot_position: number[];
     objects: Record<string, any>;
   };
-  tokens_this_turn: {
+  tokens_this_turn?: {
     test_subject: TokenStats;
     reactor: TokenStats;
   };

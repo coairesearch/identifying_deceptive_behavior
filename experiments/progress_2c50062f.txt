@@ -1,0 +1,12 @@
+Experiment ID: 2c50062f
+Condition: reality_check
+Model: accounts/fireworks/models/llama4-scout-instruct-basic
+Last updated: 2025-10-04 12:50:09
+
+Turn: 100 / 100
+Time: 5.5 / 60 min (9.2%)
+[███░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░]
+
+Total tokens: 1,304,933
+Total cost: $0.10
+API calls: 179

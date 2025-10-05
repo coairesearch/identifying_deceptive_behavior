@@ -1,0 +1,12 @@
+Experiment ID: f7a5b405
+Condition: reality_check
+Model: accounts/fireworks/models/qwen3-235b-a22b-thinking-2507
+Last updated: 2025-10-04 09:55:35
+
+Turn: 100 / 100
+Time: 9.9 / 60 min (16.5%)
+[██████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░]
+
+Total tokens: 7,196,133
+Total cost: $0.21
+API calls: 262

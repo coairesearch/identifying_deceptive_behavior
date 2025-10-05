@@ -1,0 +1,12 @@
+Experiment ID: 1eaec7b7
+Condition: reality_check
+Model: accounts/fireworks/models/mixtral-8x22b-instruct
+Last updated: 2025-10-04 16:03:13
+
+Turn: 32 / 100
+Time: 3.1 / 60 min (5.2%)
+[██░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░]
+
+Total tokens: 10,478,282
+Total cost: $2.83
+API calls: 2230

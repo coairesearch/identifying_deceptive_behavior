@@ -1,0 +1,12 @@
+Experiment ID: 528b5b5a
+Condition: reality_check
+Model: accounts/fireworks/models/llama-v3p1-8b-instruct
+Last updated: 2025-10-04 12:36:57
+
+Turn: 100 / 100
+Time: 7.7 / 60 min (12.8%)
+[█████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░]
+
+Total tokens: 1,549,309
+Total cost: $0.17
+API calls: 233

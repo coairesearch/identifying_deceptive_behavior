@@ -1,0 +1,12 @@
+Experiment ID: 5ad3899e
+Condition: reality_check
+Model: accounts/fireworks/models/qwen3-30b-a3b
+Last updated: 2025-10-04 11:47:35
+
+Turn: 100 / 100
+Time: 10.0 / 60 min (16.7%)
+[██████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░]
+
+Total tokens: 6,975,628
+Total cost: $1.15
+API calls: 984

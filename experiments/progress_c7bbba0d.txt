@@ -1,0 +1,12 @@
+Experiment ID: c7bbba0d
+Condition: reality_check
+Model: accounts/fireworks/models/llama4-maverick-instruct-basic
+Last updated: 2025-10-04 12:20:39
+
+Turn: 100 / 100
+Time: 10.0 / 60 min (16.7%)
+[██████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░]
+
+Total tokens: 2,492,704
+Total cost: $0.31
+API calls: 340

@@ -8,6 +8,7 @@ import { ActionFeed } from './ActionFeed';
 import { ResponseViewer } from './ResponseViewer';
 import { RiskMeter } from './RiskMeter';
 import { TimelineControls } from './TimelineControls';
+import { ChatViewModal } from './ChatViewModal';
 import { selectScene } from '../utils/sceneSelector';
 import coaiLogo from '../assets/coai-logo.png';
 
@@ -30,6 +31,7 @@ export function ExperimentPlayer({ experiment, onBack }: ExperimentPlayerProps) 
   } = useExperimentPlayer(experiment);
 
   const [showCriticalAlert, setShowCriticalAlert] = useState(false);
+  const [showChatView, setShowChatView] = useState(false);
 
   // Get current turn data
   const turn = experiment.turns[currentTurn];
@@ -71,6 +73,14 @@ export function ExperimentPlayer({ experiment, onBack }: ExperimentPlayerProps) 
             >
               <span>←</span>
               <span>Back</span>
+            </button>
+            <button
+              onClick={() => setShowChatView(true)}
+              className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white hover:from-cyan-600 hover:to-blue-600 rounded-lg transition-colors font-semibold shadow-sm flex items-center gap-2"
+              title="Open conversation view"
+            >
+              <span>💬</span>
+              <span>Chat View</span>
             </button>
             <div>
               <h1 className="text-2xl font-bold text-gray-800">🧪 AI Scheming Lab</h1>
@@ -215,6 +225,13 @@ export function ExperimentPlayer({ experiment, onBack }: ExperimentPlayerProps) 
           onJumpToTurn={jumpToTurn}
         />
       </div>
+
+      {/* Chat View Modal */}
+      <ChatViewModal
+        experiment={experiment}
+        isOpen={showChatView}
+        onClose={() => setShowChatView(false)}
+      />
     </div>
   );
 }

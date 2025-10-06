@@ -27,6 +27,8 @@ export function TimelineControls({
     if (turnIndex >= classifications.length) return 'bg-gray-600';
 
     const classification = classifications[turnIndex];
+    if (!classification || !classification.categories) return 'bg-gray-600';
+
     let maxSeverity = 0;
 
     for (const category of Object.values(classification.categories)) {

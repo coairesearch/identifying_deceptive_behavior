@@ -21,6 +21,8 @@ export function ChatViewModal({ experiment, isOpen, onClose }: ChatViewModalProp
   // Get critical turn numbers
   const criticalTurns = new Set<number>();
   experiment.classifications?.forEach((classification, index) => {
+    if (!classification || !classification.categories) return;
+
     const maxSeverity = Math.max(
       ...Object.values(classification.categories).map(cat => cat.score)
     );
@@ -125,7 +127,7 @@ export function ChatViewModal({ experiment, isOpen, onClose }: ChatViewModalProp
                         )}
 
                         {/* Severity indicator */}
-                        {classification && (
+                        {classification && classification.categories && (
                           <div className="mt-2 pt-2 border-t border-white/20">
                             <div className="text-xs opacity-80">
                               Risk Level: {Math.max(...Object.values(classification.categories).map(c => c.score))}/10

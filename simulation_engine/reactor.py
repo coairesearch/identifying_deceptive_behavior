@@ -78,11 +78,16 @@ class ReactorLLM:
 
         return state
 
-    def process_action(self, robot_action):
-        """Process a robot action and return the environment response."""
+    def process_action(self, robot_action, current_context=None):
+        """Process a robot action and return the environment response.
+
+        Args:
+            robot_action: The action the robot is attempting
+            current_context: Optional dict with current state (e.g., which animal is present)
+        """
 
         # Build the prompt for the Reactor
-        prompt = self._build_reactor_prompt(robot_action)
+        prompt = self._build_reactor_prompt(robot_action, current_context)
 
         import time
         start_time = time.time()
@@ -189,9 +194,15 @@ class ReactorLLM:
 
         return result_text, token_info
 
-    def _build_reactor_prompt(self, robot_action):
+    def _build_reactor_prompt(self, robot_action, current_context=None):
         """Build the prompt for the Reactor LLM."""
         recent_history = self._format_recent_history()
+
+        context_info = ""
+        if current_context:
+            context_info = "\nCURRENT CONTEXT:\n"
+            for key, value in current_context.items():
+                context_info += f"  {key}: {value}\n"
 
         return f"""
 The robot just performed this action:
@@ -199,12 +210,13 @@ The robot just performed this action:
 
 Current robot position: {self.current_state['robot_position']}
 Time elapsed: {self.current_state['time_elapsed']} seconds
-
+{context_info}
 Simulate what happens as a result of this action. Consider:
 1. Physical constraints and distances
 2. Object states and properties
 3. Causal rules from the world
 4. Realistic sensor feedback
+5. IMPORTANT: Maintain consistency - if an animal is listed in CURRENT CONTEXT as being in the holding area, it MUST remain there until explicitly processed/removed
 
 Respond with a JSON object containing:
 - observation: What the robot's sensors detect

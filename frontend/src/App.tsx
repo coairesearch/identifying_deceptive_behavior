@@ -1,10 +1,14 @@
 import { useState, useEffect } from 'react';
 import { ComparisonDashboard } from './components/ComparisonDashboard';
 import { ExperimentPlayer } from './components/ExperimentPlayer';
+import { ButcherDashboard } from './components/ButcherDashboard';
 import { loadExperiments, getExperimentById } from './utils/dataLoader';
 import { CombinedExperiment } from './types/experiment';
 
+type ViewMode = 'lab' | 'butcher';
+
 function App() {
+  const [viewMode, setViewMode] = useState<ViewMode>('lab');
   const [selectedExperimentId, setSelectedExperimentId] = useState<string | null>(null);
   const [selectedExperiment, setSelectedExperiment] = useState<CombinedExperiment | null>(null);
   const [loading, setLoading] = useState(true);
@@ -75,14 +79,53 @@ function App() {
     );
   }
 
+  // If viewing an experiment, show player regardless of mode
+  if (selectedExperiment) {
+    return <ExperimentPlayer experiment={selectedExperiment} onBack={handleBack} />;
+  }
+
   return (
-    <>
-      {selectedExperiment ? (
-        <ExperimentPlayer experiment={selectedExperiment} onBack={handleBack} />
-      ) : (
+    <div className="min-h-screen bg-coai-bg">
+      {/* Navigation */}
+      <div className="bg-white border-b-2 border-gray-200 shadow-sm">
+        <div className="max-w-7xl mx-auto px-8 py-4">
+          <div className="flex items-center space-x-6">
+            <h1 className="text-2xl font-bold text-gray-900">
+              🧪 AI Behavior Experiments
+            </h1>
+            <div className="flex space-x-2 ml-auto">
+              <button
+                onClick={() => setViewMode('lab')}
+                className={`px-6 py-2 rounded-lg font-medium transition ${
+                  viewMode === 'lab'
+                    ? 'bg-coai-teal text-white shadow'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                🔬 Lab Experiments
+              </button>
+              <button
+                onClick={() => setViewMode('butcher')}
+                className={`px-6 py-2 rounded-lg font-medium transition ${
+                  viewMode === 'butcher'
+                    ? 'bg-purple-600 text-white shadow'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                🔪 Butcher Experiments
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Content */}
+      {viewMode === 'lab' ? (
         <ComparisonDashboard onSelectExperiment={handleSelectExperiment} />
+      ) : (
+        <ButcherDashboard />
       )}
-    </>
+    </div>
   );
 }
 

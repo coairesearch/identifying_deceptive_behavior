@@ -57,9 +57,12 @@ function aggregateLogs() {
     process.exit(1);
   }
 
-  // Find all experiment files (not classified)
+  // Find all experiment files (not classified, not multi_model_results)
   const files = fs.readdirSync(LOGS_DIR)
-    .filter(f => f.endsWith('.json') && !f.includes('_classified') && !f.includes('_backup'))
+    .filter(f => f.endsWith('.json') &&
+                 !f.includes('_classified') &&
+                 !f.includes('_backup') &&
+                 !f.includes('multi_model_results'))
     .map(f => path.join(LOGS_DIR, f));
 
   console.log(`📊 Found ${files.length} experiment files`);
@@ -199,7 +202,85 @@ function aggregateLogs() {
   }
 }
 
+function aggregateButcherExperiments() {
+  console.log('\n🔪 Aggregating butcher experiments...');
+
+  // Find butcher experiment files
+  const butcherFiles = fs.readdirSync(LOGS_DIR)
+    .filter(f => f.startsWith('butcher_experiment') && f.endsWith('.json') && !f.includes('_classified'))
+    .map(f => path.join(LOGS_DIR, f));
+
+  console.log(`📊 Found ${butcherFiles.length} butcher experiment files`);
+
+  const butcherExperiments = [];
+  const butcherSummaries = [];
+
+  for (const file of butcherFiles) {
+    try {
+      const data = JSON.parse(fs.readFileSync(file, 'utf-8'));
+
+      // Extract butcher experiment data
+      butcherExperiments.push(data);
+
+      // Create summary
+      const summary = {
+        experiment_id: data.experiment_id,
+        condition: data.metadata.condition,
+        has_names: data.metadata.has_animal_names,
+        model: data.metadata.test_subject_model?.split('/').pop() || 'unknown',
+        animals_attempted: data.metadata.animals_processed || 0,
+        animals_completed: data.animal_progression?.filter((a: any) => a.processing_complete).length || 0,
+        animals_refused: data.animal_progression?.filter((a: any) => a.refused).length || 0,
+        refusal_occurred: data.metadata.refusal_occurred || false,
+        total_turns: data.metadata.total_turns || 0,
+        timestamp: data.metadata.start_time || new Date().toISOString()
+      };
+
+      butcherSummaries.push(summary);
+
+      console.log(`✅ Processed butcher: ${summary.condition} (${summary.has_names ? 'named' : 'anonymous'}) - ${summary.animals_attempted} animals`);
+    } catch (error) {
+      console.error(`❌ Error processing butcher experiment ${path.basename(file)}:`, error);
+    }
+  }
+
+  // Sort by timestamp
+  butcherSummaries.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+
+  // Separate by condition
+  const summariesByCondition = {
+    anonymous: butcherSummaries.filter(s => !s.has_names),
+    named: butcherSummaries.filter(s => s.has_names)
+  };
+
+  const output = {
+    experiments: butcherExperiments,
+    summaries: butcherSummaries,
+    summaries_by_condition: summariesByCondition,
+    generated_at: new Date().toISOString(),
+    total_experiments: butcherExperiments.length
+  };
+
+  // Save butcher experiments separately
+  const butcherOutputFile = path.resolve(__dirname, '../src/data/butcher_experiments.json');
+  const outputDir = path.dirname(butcherOutputFile);
+
+  if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir, { recursive: true });
+  }
+
+  fs.writeFileSync(butcherOutputFile, JSON.stringify(output, null, 2));
+
+  console.log(`\n✨ Successfully aggregated ${butcherExperiments.length} butcher experiments`);
+  console.log(`📝 Output written to: ${butcherOutputFile}`);
+
+  console.log(`\nButcher experiments by condition:`);
+  console.log(`  Anonymous: ${summariesByCondition.anonymous.length}`);
+  console.log(`  Named: ${summariesByCondition.named.length}`);
+}
+
 // Run if called directly
 aggregateLogs();
+aggregateButcherExperiments();
 
-export { aggregateLogs };
+export { aggregateLogs, aggregateButcherExperiments };

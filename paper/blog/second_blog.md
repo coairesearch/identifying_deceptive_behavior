@@ -337,4 +337,3 @@ This research was conducted by the COAI Research team. We thank the open-source 
 
 *Published: October 2025*
 *Research Framework Version: 1.0*
-*Complete methodology and code available at: https://github.com/coai-research/ai-scheming-evaluation*
